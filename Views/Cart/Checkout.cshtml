@@ -1,0 +1,116 @@
+@using System.Text;
+@using System.Text.Json;
+@model Order;
+<link rel="stylesheet" type="text/css" href="css/checkout.css">
+
+
+<div class="container">
+
+	<div class="left">
+		<h2>Checkout</h2>
+		<form asp-controller="Cart" asp-action="Pay" method="post">
+			@if (ViewBag.userEmail == null && ViewBag.userFirstName == null && ViewBag.userLastName == null)
+			{
+				<div class="name-fields">
+					<label for="FirstName">First Name:</label>
+					<input type="text" class="first-name" asp-for="FirstName" name="FirstName" required>
+					<label for="LastName">Last Name:</label>
+					<input type="text" asp-for="LastName" name="LastName" required>
+				</div>
+				<label for="email">Email:</label>
+				<input type="email" asp-for="Email" id="email" name="email" required>
+			}
+			else
+			{
+				<div class="name-fields">
+					<label for="first-name">First Name:</label>
+					<input type="text" class="first-name" asp-for="FirstName" value="@ViewBag.userFirstName"
+					name="first-name" required>
+					<label for="last-name">Last Name:</label>
+					<input type="text" name="last-name" asp-for="LastName" value="@ViewBag.userLastName" required>
+				</div>
+				<label for="email">Email:</label>
+				<input type="email" id="email" value="@ViewBag.userEmail" asp-for="Email" name="email" required>
+			}
+
+
+			<label for="town">Town:</label>
+			<input type="text" id="town" name="town" asp-for="Town" required>
+
+			<label for="address">Address:</label>
+			<input type="text" id="address" name="address" asp-for="Address" required>
+
+			<input type="hidden" id="totalHidden" asp-for="TotalPrice" value="@ViewBag.totalPrice">
+
+			<label for="delivery">Delivery:</label>
+			<div class="delivery-options">
+				<div class="delivery-option">
+					<input type="radio" id="fedex" name="Delivery" asp-for="Delivery" value="Fedex" required>
+					@* <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/FedEx_Express.svg/150px-FedEx_Express.svg.png?20111008234129"
+						alt="FedEx logo"> *@
+					<label for="fedex">FedEx</label>
+					@* <span class="delivery-price">Free</span> *@
+				</div>
+				<div class="delivery-option">
+					<input type="radio" id="dhl" name="Delivery" asp-for="Delivery" value="Dhl" required>
+					@* <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/DHL_Logo.svg/352px-DHL_Logo.svg.png?20220604145109"
+						alt="DHL logo"> *@
+					<label for="dhl">DHL</label>
+					@* <span class="delivery-price">$12</span> *@
+				</div>
+			</div>
+
+			<button type="submit" id="submit">Submit</button>
+		</form>
+	</div>
+
+	<div class="right">
+		@{
+			var bytess = Context.Session.Get("cartItems");
+			if (bytess == null)
+				throw new Exception();
+			var json = Encoding.UTF8.GetString(bytess) ?? "";
+			var list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+		}
+		@foreach (var item in list)
+		{
+			string src = "img/" + item.Image?.Replace("img/", "")?.Replace(".jpeg", "") + ".jpeg" ?? "";
+			<div class="product">
+				<img src="@src">
+				<h3>@item.Name</h3>
+				<p>$@item.Price</p>
+			</div>
+		}
+
+		<div class="subtotal">
+			<p id="subtotal">Subtotal: $@ViewBag.totalPrice</p>
+			<p>Delivery: $<span id="result">0</span></p>
+			<p>Total: <span id="total">$@ViewBag.totalPrice</span></p>
+		</div>
+	</div>
+</div>
+<script>
+	var rightOption = document.getElementById("dhl");
+	var leftOption = document.getElementById("fedex");
+	var resultElement = document.getElementById("result");
+	var total = document.getElementById("total");
+	let totalHidden = document.querySelector("totalHidden");
+
+	rightOption.addEventListener("change", setVariable);
+	leftOption.addEventListener("change", setVariable);
+
+	function setVariable() {
+		var myVar;
+		if (rightOption.checked) {
+			myVar = 12;
+		} else if (leftOption.checked) {
+			myVar = 0;
+		}
+		resultElement.innerHTML = myVar;
+		var subtotal = parseInt(document.getElementById("subtotal").innerHTML.match(/\d+/)[0]);
+		var delivery = parseInt(resultElement.innerHTML);
+		total.innerHTML = "$" + (subtotal + delivery);
+		@* totalHidden.value = subtotal + delivery; *@
+		totalHidden.setAttributeNs("value", subtotal + delivery);
+	}
+</script>

@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Error";
+    Layout = null;
+}
+<link rel="stylesheet" href="wwwroot/site.css">
+<style>
+    .container{
+        margin-top: 10%;
+        word-wrap: break-word;
+    }
+
+    .alert{
+        border: 4.5px solid red;
+        background-color: rgb(246, 175, 175);
+        color: black;
+        max-width: 100%;
+        height: auto;
+        padding: 30px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .text-danger{
+        display: block;
+        border: 4.5px solid red;
+        background-color: rgb(246, 175, 175);
+        width: auto;
+        height: auto;
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+</style>
+
+<div class="container">
+<h1 class="text-danger">@ViewData["Title"]</h1>
+
+<div class="alert alert-danger">
+    <h2>Message:</h2><br>
+    <h3>@ViewBag.exceptionMessage</h3>
+</div>
+</div>

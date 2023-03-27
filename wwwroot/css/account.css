@@ -1,0 +1,106 @@
+.fa-eye {
+    font-size: 20px;
+    color: #bababa;
+    position: absolute;
+    
+    right: 15px;
+    top: 25%;
+    transform: translate(0, -50%);
+    cursor: pointer;
+}
+
+.text-danger {
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+body {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+}
+
+.form {
+    width: 500px;
+    padding: 40px;
+    box-shadow: 0 4px 16px #c1d6cc;
+    border-radius: 6px;
+    border: 2px solid #bababa;
+    letter-spacing: 1px;
+}
+
+.label {
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.control-label {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    color: #b2b2b2;
+    transition: 0.3s;
+}
+
+.form .input {
+    width: 100%;
+    padding: 0 0 10px 0;
+    border: none;
+    border-bottom: 2px solid #aeb0b0;
+    outline: none;
+    background-color: transparent;
+    transition: 0.6s;
+}
+
+.form .input:focus {
+    border-bottom: 2px solid #376581;
+}
+
+.form .button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #376581;
+    outline: none;
+    cursor: pointer;
+    transition: 0.5s;
+    font-size: 22px;
+    text-align: center;
+    width: 180px;
+    margin-bottom: 20px;
+    margin-top: -10px;
+}
+
+.form .button:focus,
+.form .button:hover {
+    background-color: #0a3856;
+}
+
+.input:focus~.control-label,
+.input:not(:placeholder-shown)~.control-label {
+    top: -18px;
+    font-size: 12px;
+}
+
+#login {
+    text-decoration: none;
+    color: #376581;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#login:hover {
+    text-decoration: underline;
+    text-decoration-color: #376581;
+}

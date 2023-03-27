@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="css/home.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="filters">
+    <div class="filter">
+        <p>Brand: </p>
+        <div class="checkbox1">
+
+            <label> <input type="checkbox" class="checkbox" value="Nike" name="option" />Nike</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="checkbox" value="Adidas" name="option" />Adidas</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="checkbox" value="New-Balance" name="option" />New Balance</label>
+        </div>
+
+    </div>
+
+    <div class="filter">
+        <p>Price: </p>
+        <div class="wrapper">
+            <div class="values">
+                <span id="range1">
+                    0
+                </span>
+                <span> &dash; </span>
+                <span id="range2">
+                    200
+                </span>
+            </div>
+            <div class="container">
+                <div class="slider-track" style="background-color: grey;"></div>
+                <input type="range" min="0" max="200" value="0" id="slider-1" oninput="slideOne()">
+                <input type="range" min="0" max="200" value="200" id="slider-2" oninput="slideTwo()">
+            </div>
+        </div>
+    </div>
+    <div class="filter">
+        <p>Order by: </p>
+        <select name="" id="sort">
+            <option value="default">Default</option>
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+        </select>
+    </div>
+    <a href="" id="URL">OK</a>
+</div>
+
+<script src="js/filter.js"></script>

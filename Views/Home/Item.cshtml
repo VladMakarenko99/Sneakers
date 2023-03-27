@@ -1,0 +1,44 @@
+@model practice.Models.Item
+@{
+    ViewData["Title"] = Model?.Name;
+}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="css/item.css" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="product-image">
+            <img src="@Model?.Image" />
+        </div>
+        <div class="product-info">
+              <h2 class="product-name">@Model?.Name</h2>
+              <p class="product-price">$@Model?.Price</p>
+            <div class="product-size">
+                <label for="size">Choose size:</label>
+                <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                    <select id="size" class="dropdown" asp-for="Size" asp-items="@ViewBag.sizes"></select>
+                    <input type="hidden" asp-for="Id" value="@Model?.Id">
+                    <input type="hidden" asp-for="Name" value="@Model?.Name">
+                    <input type="hidden" asp-for="Price" value="@Model?.Price">
+                    <input type="hidden" asp-for="Description" value="@Model?.Id">
+                    <input type="hidden" asp-for="Id" value="@Model?.Description">
+                    <input type="hidden" asp-for="Image" value="@Model?.Image">
+                    <input type="hidden" asp-for="BrandId" value="@Model?.BrandId">
+                    <p class="product-description">@Model?.Description</p>
+                    <input type="submit" class="add-to-cart" value="To Cart">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

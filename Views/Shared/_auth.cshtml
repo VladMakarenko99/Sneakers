@@ -1,0 +1,40 @@
+@using System.Text;
+@using System.Text.Json;
+<link rel="stylesheet" href="css/site.css" />
+
+@{
+    var bytes = Context.Session.Get("cartItems");
+    if(bytes == null){
+        ViewBag.itemCount = 0;
+    }
+    else{
+        var json = Encoding.UTF8.GetString(bytes);
+        var list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+        ViewBag.itemCount =  list.Count;
+    }
+    
+    ViewBag.userFirstName = Context.Session.GetString("userFirstName");
+    ViewBag.userEmail = Context.Session.GetString("userEmail");
+
+    if (ViewBag.userFirstName == null)
+    {
+        <a class="btn auth" href="/account/login">Log In</a>
+        <a class="btn reg" href="/account/register">Register</a>
+        <div class="cartdiv">
+            <a href="/cart"><img class="cart" src="~/img/9021543_shopping_cart_simple_bold_icon.svg" /></a>
+            <div class="counter">@ViewBag.itemCount</div>
+        </div>
+        
+    }
+    else
+    {
+        <a id="hello" href="/profile/@ViewBag.userEmail">Hello, @ViewBag.userFirstName</a>
+        <a asp-controller="Account" asp-action="Logout" class="btn reg">Log Out</a>
+        <div class="cartdiv">
+            <a href="/cart"><img class="cart" src="~/img/9021543_shopping_cart_simple_bold_icon.svg" /></a>
+            <div class="counter">@ViewBag.itemCount</div>
+        </div>
+    }
+}
+
+

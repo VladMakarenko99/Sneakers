@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="~/css/site.css">
+<link rel="stylesheet" href="~/css/profile.css">
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div style="margin-top: 10%;">
+    <button data-modal-target="#modal">Delete Account</button>
+</div>
+
+
+<div class="modal" id="modal">
+    <div class="modal-header">
+        <div class="title">Are you sure you want to delete your account?</div>
+        <button data-close-button class="close-button">&times;</button>
+    </div>
+    @* <div class="modal-body">
+        Are you sure you want to delete your account?
+    </div> *@
+    <a asp-action="DeleteAccount" asp-controller="Account" class="button">Yes</a>
+      <span data-close-button class="button">No</span>
+</div>
+
