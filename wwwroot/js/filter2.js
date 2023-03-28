@@ -1,11 +1,24 @@
+window.onload = function () {
+    if (window.location.pathname === "/") {
+        localStorage.clear();
+        document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+        url = "";
+    }
+
+
+    loadSliderValues();
+    loadSortValue();
+}
+
 const checkboxes = document.getElementsByClassName("checkbox");
 const display = document.querySelector(".display");
 const htmlUrl = document.getElementById("URL");
 
 let url = "";
-if (JSON.parse(localStorage.getItem('url')) !== null) {
-    url = JSON.parse(localStorage.getItem('url'));
-    console.log("YES!" + url);
+if (localStorage.getItem("url")) {
+    url = localStorage.getItem("url");
 }
 else {
     url = "";
@@ -17,35 +30,51 @@ let brandString = "";
 for (const checkbox of checkboxes) {
     const value = localStorage.getItem(checkbox.value);
     if (value === 'checked') {
-      checkbox.checked = true;
+        checkbox.checked = true;
     }
+}
+
+// Save the checked state of each checkbox to localStorage when it is changed
+for (const checkbox of checkboxes) {
+    checkbox.addEventListener('change', (event) => {
+        const value = event.target.value;
+        const checked = event.target.checked;
+        if (checked) {
+            localStorage.setItem(value, 'checked');
+        } else {
+            localStorage.removeItem(value);
+        }
+    });
+}
+
+function findBrandString(inputString) {
+    const regex = /(brand=[\w+-]+)/;
+    const matches = inputString.match(regex);
+    if (!matches) {
+      return "";
+    }
+    const brandString = matches[1].replace("q:", "");
+    const brands = brandString.split('=')[1].split('+');
+    const validBrands = brands.filter((brand) =>
+      ['Nike', 'Adidas', 'New-Balance'].includes(brand)
+    );
+    if (validBrands.length === 0) {
+      return "";
+    }
+    const newBrandString = `brand=${validBrands.join('+')}`;
+    return newBrandString;
   }
   
-  // Save the checked state of each checkbox to localStorage when it is changed
-  for (const checkbox of checkboxes) {
-    checkbox.addEventListener('change', (event) => {
-      const value = event.target.value;
-      const checked = event.target.checked;
-      if (checked) {
-        localStorage.setItem(value, 'checked');
-      } else {
-        localStorage.removeItem(value);
-      }
-    });
-  }
 for (let i of checkboxes) {
     i.addEventListener("change", function (el) {
-        if(url.includes("&price="))
-            brandString = url.split("&price=")[0];
-        else if (url.includes("q:price=")) {
-            url = url.replace("q:price=", "&price=");           
-            brandString = url.split("&price=")[0];
+        if(url !== ""){
+            brandString = findBrandString(url);
+            console.log("FOUND" + brandString)
         }
-        else
-            brandString = url;
+
         if (el.target.checked) {
             if (!brandString.includes("brand=")) {
-                brandString += "/q:brand=" + el.target.value;
+                brandString += "brand=" + el.target.value;
             }
             else {
                 brandString += "+" + el.target.value;
@@ -55,56 +84,54 @@ for (let i of checkboxes) {
         if (!el.target.checked) {
             brandString = brandString.replace("+" + el.target.value, "");
             brandString = brandString.replace(el.target.value, "");
-            brandString = brandString.replace("/q:brand=+", "/q:brand=");
+            brandString = brandString.replace("brand=+", "brand=");
         }
 
         brandString = brandString.replace(/\/+/g, "/");
 
-        if (brandString === "/q:brand=" || brandString === "q:" || brandString === "q:brand=") {
+        if (brandString === "brand=")
             brandString = "";
-        }
-        if (brandString === "" && url.includes("&price=")) {
-            console.log("here");
-            url = url.replace(/.+&price=/g, brandString + "/q:price=");
-            htmlUrl.href = url;
-            localStorage.setItem('url', JSON.stringify(url));
-            return;
-        }
-        if (url.includes("&price=")) {
-            url = url.replace(/.+&price=/g, brandString + "&price=");
-            htmlUrl.href = url;
-            localStorage.setItem('url', JSON.stringify(url));
-            return;
-        }
-        if (url.includes("/q:price=")) {
-            url = url.replace("/q:price=", brandString + "&price=");
-        }
-        else {
-            url = brandString;
+
+
+        if (url === "")
+            url += "/q:" + brandString;
+
+        if (!url.includes("brand=") && url !== "")
+            url += "&" + brandString;
+
+        if (url.includes("brand=")) {
+            if (url.match(/brand=.+&/) && brandString !== "") {
+                url = url.replace(/brand=.+&/, brandString + "&");
+                htmlUrl.href = url;
+                localStorage.setItem('url', url);
+                return;
+            }
+
+            if (brandString === "") {
+                url = url.replace(/&brand=.+&/, "&");
+                if (url.match(/&brand=.+/))
+                    url = url.replace(/&brand=.+/, "");
+                if(url.match(/q:brand=/)){
+                    url = url.replace(/q:brand=.+&/, "q:");
+                    if(!url.includes("&"))
+                        url = url.replace(/q:brand=.+/, "");
+                }
+                htmlUrl.href = url;
+                localStorage.setItem('url', url);
+                return;
+            }
+            url = url.replace(/brand=.+/, brandString);
+
         }
 
+        if (url === "/q:" || url === "/")
+            url = "";
         console.log(url);
         htmlUrl.href = url;
-        localStorage.setItem('url', JSON.stringify(url));
-        if (htmlUrl.href === "" || url === "") {
-            htmlUrl.href = "/";
-        }
+        localStorage.setItem('url', url);
     });
 }
 
-window.onload = function () {
-    if (window.location.pathname === "/") {
-        localStorage.clear();
-        document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
-            checkbox.checked = false;
-          });
-        url = "";
-      }      
-      
-      
-    loadSliderValues();
-    loadSortValue();
-}
 let sliderOne = document.getElementById("slider-1");
 let sliderTwo = document.getElementById("slider-2");
 let displayValOne = document.getElementById("range1");
@@ -150,21 +177,20 @@ function formPriceString() {
     else {
         priceString = "price=" + min + "-" + max;
     }
-    if (!url.includes("brand=")) {
+    if (url === "" || url === "/" || url === null)  {
         url = "/q:" + priceString;
     }
-    else {
-        if (url.includes("&price=")) {
-            url = url.replace(/\d+-\d+/g, min + "-" + max);
-        }
-        else {
-            url += "&" + priceString;
-        }
+    if (!url.includes("price=") && url !== "") {
+        url += "&" + priceString;
     }
+    if (url.match(/q:price=/))
+        url = url.replace(/q:price=.+\d+/, "q:" + priceString);
+    if (url.match(/&price=.+\d+/))
+        url = url.replace(/&price=.+\d+/, "&" + priceString);
 
     url = url.replace(/&+/g, "&");
     htmlUrl.href = url;
-    localStorage.setItem('url', JSON.stringify(url));
+    localStorage.setItem('url', url);
     localStorage.setItem("slider1Value", min);
     localStorage.setItem("slider2Value", max);
 }
@@ -186,13 +212,11 @@ function loadSliderValues() {
 
 const sorter = document.getElementById("sort");
 sorter.addEventListener("change", function (el) {
-    url = url.replace(/q:sort=.+/, "");
-    url = url.replace(/&sort=.+/, "");
     let sortString = "";
-    if(url.includes("q:sort=")){
+    if (url.includes("q:sort=")) {
         sortString = url.split("q:"[1])
     }
-    if(url.includes("&sort=")){
+    if (url.includes("&sort=")) {
         sortString = url.split("&"[1])
     }
     if (!sortString.includes("sort=")) {
@@ -201,19 +225,36 @@ sorter.addEventListener("change", function (el) {
     else {
         sortString = url.replace(/sort=.+/, "sort=" + el.target.value);
     }
-    if(sortString === "sort=default"){
-        url = url.replace(/&sort=.+/, "");
+    if (sortString === "sort=default") {
+        localStorage.removeItem("sortValue");
+        if (url.match(/&sort=\w+&/)) {
+            url = url.replace(/&sort=\w+&/, "&");
+        }
+        if (url.match(/q:sort=\w+&/)) {
+            url = url.replace(/q:sort=\w+&/, "q:");
+        }
+        if (url.match(/&sort=\w+/)) {
+            url = url.replace(/&sort=\w+/, "");
+        }
         htmlUrl.href = url;
+        localStorage.setItem('url', url);
         return;
     }
     if (url === "" || url === "/" || url === null) {
         url = "/q:" + sortString;
     }
+    else if (url.includes("&sort=ascending&") || url.includes("&sort=descending&")){
+        url = url.replace(/&sort=\w+&/, "&" + sortString + "&");
+        htmlUrl.href = url;
+        localStorage.setItem('url', url);
+        localStorage.setItem("sortValue", el.target.value);
+        return;
+    }
     else {
         url = url + "&" + sortString;
     }
     htmlUrl.href = url;
-    localStorage.setItem('url', JSON.stringify(url));
+    localStorage.setItem('url', url);
     localStorage.setItem("sortValue", el.target.value);
 });
 

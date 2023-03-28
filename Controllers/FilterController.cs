@@ -42,6 +42,23 @@ public class FilterController : Controller
                 var max = GetMinAndMaxPrice(filter)[1];
                 filteredList = _context.Items.Where(x => x.Price >= min && x.Price <= max).ToList();
             }
+
+            if(filter.Contains("sort=") && filteredList.Count > 0)
+            {
+                var sort = filter.Split("sort=")[1];
+                if(sort == "ascending")
+                    filteredList = filteredList.OrderBy(x => x.Price).ToList();
+                if(sort == "descending")
+                    filteredList = filteredList.OrderByDescending(x => x.Price).ToList();
+            }
+            if(filter.Contains("sort=") && filteredList.Count == 0)
+            {
+                var sort = filter.Split("sort=")[1];
+                if(sort == "ascending")
+                    filteredList = _context.Items.OrderBy(x => x.Price).ToList();
+                if(sort == "descending")
+                    filteredList = _context.Items.OrderByDescending(x => x.Price).ToList();
+            }
         }
 
         return View(filteredList.Distinct().ToList());
