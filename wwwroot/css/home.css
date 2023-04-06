@@ -65,6 +65,22 @@ body {
     }
 }
 
+.not-found{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.not-found h1{
+    font-weight: 500;
+}
+
+.not-found a{
+    text-decoration: none;
+    color: #221f1f;
+    font-weight: 500;
+}
 
 .sidenav {
     position: fixed;
@@ -160,6 +176,7 @@ body {
     background-repeat: no-repeat,repeat;
     background-size: 14px 9px;
     border: 1px solid #d2d2d2;
+    background-image: url('tick.svg');
     border-radius: 8px;
     box-sizing: border-box;
     color: #221f1f;

@@ -51,23 +51,23 @@ function findBrandString(inputString) {
     const regex = /(brand=[\w+-]+)/;
     const matches = inputString.match(regex);
     if (!matches) {
-      return "";
+        return "";
     }
     const brandString = matches[1].replace("q:", "");
     const brands = brandString.split('=')[1].split('+');
     const validBrands = brands.filter((brand) =>
-      ['Nike', 'Adidas', 'New-Balance'].includes(brand)
+        ['Nike', 'Adidas', 'New-Balance'].includes(brand)
     );
     if (validBrands.length === 0) {
-      return "";
+        return "";
     }
     const newBrandString = `brand=${validBrands.join('+')}`;
     return newBrandString;
-  }
-  
+}
+
 for (let i of checkboxes) {
     i.addEventListener("change", function (el) {
-        if(url !== ""){
+        if (url !== "") {
             brandString = findBrandString(url);
             console.log("FOUND" + brandString)
         }
@@ -101,6 +101,7 @@ for (let i of checkboxes) {
 
         if (url.includes("brand=")) {
             if (url.match(/brand=.+&/) && brandString !== "") {
+                console.log("WORK1");
                 url = url.replace(/brand=.+&/, brandString + "&");
                 htmlUrl.href = url;
                 localStorage.setItem('url', url);
@@ -111,16 +112,16 @@ for (let i of checkboxes) {
                 url = url.replace(/&brand=.+&/, "&");
                 if (url.match(/&brand=.+/))
                     url = url.replace(/&brand=.+/, "");
-                if(url.match(/q:brand=/)){
+                if (url.match(/q:brand=/)) {
                     url = url.replace(/q:brand=.+&/, "q:");
-                    if(!url.includes("&"))
+                    if (!url.includes("&"))
                         url = url.replace(/q:brand=.+/, "");
                 }
                 htmlUrl.href = url;
                 localStorage.setItem('url', url);
                 return;
             }
-            url = url.replace(/brand=.+/, brandString);
+            url = url.replace(/brand=\w+/, brandString);
 
         }
 
@@ -177,7 +178,7 @@ function formPriceString() {
     else {
         priceString = "price=" + min + "-" + max;
     }
-    if (url === "" || url === "/" || url === null)  {
+    if (url === "" || url === "/" || url === null) {
         url = "/q:" + priceString;
     }
     if (!url.includes("price=") && url !== "") {
@@ -189,6 +190,7 @@ function formPriceString() {
         url = url.replace(/&price=.+\d+/, "&" + priceString);
 
     url = url.replace(/&+/g, "&");
+    
     htmlUrl.href = url;
     localStorage.setItem('url', url);
     localStorage.setItem("slider1Value", min);
@@ -213,6 +215,9 @@ function loadSliderValues() {
 const sorter = document.getElementById("sort");
 sorter.addEventListener("change", function (el) {
     let sortString = "";
+    if (localStorage.getItem("sortValue")) {
+        sortString = "sort=" + localStorage.getItem("sortValue")
+    }
     if (url.includes("q:sort=")) {
         sortString = url.split("q:"[1])
     }
@@ -236,6 +241,8 @@ sorter.addEventListener("change", function (el) {
         if (url.match(/&sort=\w+/)) {
             url = url.replace(/&sort=\w+/, "");
         }
+        if (url.match(/q:sort=\w+$/))
+            url = url.replace(/q:sort=\w+$/, "");
         htmlUrl.href = url;
         localStorage.setItem('url', url);
         return;
@@ -243,8 +250,22 @@ sorter.addEventListener("change", function (el) {
     if (url === "" || url === "/" || url === null) {
         url = "/q:" + sortString;
     }
-    else if (url.includes("&sort=ascending&") || url.includes("&sort=descending&")){
-        url = url.replace(/&sort=\w+&/, "&" + sortString + "&");
+    else if (url.includes("&sort=ascending&") || url.includes("&sort=descending&")) {
+        url = url.replace(/&sort=\w+&/, "&" + sortString + "&")
+        htmlUrl.href = url;
+        localStorage.setItem('url', url);
+        localStorage.setItem("sortValue", el.target.value);
+        return;
+    }
+    else if (url.includes("&sort=")) {
+        url = url.replace(/&sort=\w+$/gm, "&" + sortString);
+        htmlUrl.href = url;
+        localStorage.setItem('url', url);
+        localStorage.setItem("sortValue", el.target.value);
+        return;
+    }
+    else if (url.includes("q:sort=")) {
+        url = url.replace(/q:sort=\w+/gm, "q:" + sortString);
         htmlUrl.href = url;
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
@@ -264,3 +285,4 @@ function loadSortValue() {
         document.getElementById("sort").value = sortValue;
     }
 }
+

@@ -1,8 +1,12 @@
+.form .input.input-validation-error {        
+    border-color: red;
+    margin-bottom: 7px;
+}
 .fa-eye {
     font-size: 20px;
     color: #bababa;
     position: absolute;
-    
+
     right: 15px;
     top: 25%;
     transform: translate(0, -50%);
@@ -40,7 +44,11 @@ body {
 
 .form-group {
     position: relative;
-    margin-bottom: 32px;
+    margin-bottom: 45px;
+}
+
+.form-group.-login {
+    margin-bottom: 70px;
 }
 
 .control-label {
