@@ -1,22 +1,20 @@
 ﻿<Properties StartupConfiguration="{90C10BA4-2220-4AA2-8F88-87806A7F1870}|https">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Views/Shared/_Layout.cshtml">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/AccountController.cs">
     <Files>
-      <File FileName="Views/Shared/_Layout.cshtml" Line="8" Column="72" />
+      <File FileName="Controllers/AccountController.cs" Line="180" Column="11" />
+      <File FileName="Program.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="practice" expanded="True">
             <Node name="practice" expanded="True">
-              <Node name="Controllers" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Shared" expanded="True">
-                  <Node name="_Layout.cshtml" selected="True" />
-                </Node>
+              <Node name="Controllers" expanded="True">
+                <Node name="AccountController.cs" selected="True" />
               </Node>
-              <Node name="wwwroot" expanded="True">
-                <Node name="css" expanded="True" />
-                <Node name="img" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Shared" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -25,11 +23,10 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <Debugger.DebugSourceFolders />
-  <MonoDevelop.Ide.ItemProperties.practice PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.practice PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
 </Properties>

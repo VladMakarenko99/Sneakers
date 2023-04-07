@@ -1,4 +1,6 @@
-
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +9,7 @@ using practice.Data;
 using practice.Models;
 using System;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace practice.Controllers;
 
@@ -16,13 +19,15 @@ public class AccountController : Controller
 
     public AccountController(AppDbContext context) => this._context = context;
 
-    
+
     [Route("/account/register")]
     [HttpGet]
     public IActionResult Register()
     {
-         if (HttpContext.Session.GetString("userEmail") != null)
-             return NotFound();
+        if (HttpContext.Session.GetString("userEmail") != null)
+            return NotFound();
+
+
         return View();
     }
 
@@ -77,15 +82,6 @@ public class AccountController : Controller
         HttpContext.Session.SetString("userLastName", user.LastName ?? "");
         HttpContext.Session.SetString("userEmail", user.Email ?? "");
 
-        var client = new SmtpClient("smtp.mailtrap.io", 2525)
-        {
-            Credentials = new NetworkCredential("4eeaeb0c1f0553", "d56eaf5a3b0564"),
-            EnableSsl = true
-        };
-
-        client.Send("i.e 55c49ba776-dc4b99+1@inbox.mailtrap.io", Convert.ToString(user.Email)!,
-            $@"Registration is successful, {user.FirstName} {user.LastName}!", "");
-
 
 
         return Redirect("/");
@@ -95,8 +91,8 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
-         if (HttpContext.Session.GetString("userEmail") != null)
-             return NotFound();
+        if (HttpContext.Session.GetString("userEmail") != null)
+            return NotFound();
         return View();
     }
 
@@ -158,9 +154,10 @@ public class AccountController : Controller
         return View();
     }
 
-    public async Task<IActionResult> DeleteAccount(){
+    public async Task<IActionResult> DeleteAccount()
+    {
         string? email = HttpContext.Session.GetString("userEmail");
-        if(string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(email))
             return NotFound();
         var userFound = _context.Users.FirstOrDefault(x => x.Email == email) ?? new User();
         _context.Users.Remove(userFound);
@@ -170,4 +167,52 @@ public class AccountController : Controller
         HttpContext.Session.Remove("userEmail");
         return Redirect("/");
     }
+
+    [HttpGet]
+    [Route("/account/google-login")]
+    public IActionResult GoogleLogin()
+    {
+        Console.WriteLine(Url.Action("GoogleResponse"));
+
+        var authProperties = new AuthenticationProperties
+        {
+            RedirectUri = Url.Action("GoogleResponse")
+        };
+        return Challenge(authProperties, GoogleDefaults.AuthenticationScheme);
+    }
+
+
+    [Route("/account/google-response")]
+    public  async Task<IActionResult> GoogleResponse()
+    {
+        var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        if (!result.Succeeded)
+        {
+            return RedirectToAction("Login");
+        }
+
+        var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+        var userFound = _context.Users.FirstOrDefault(x => x.Email == email);
+
+        if (userFound == null)
+        {
+            var user = new User(result.Principal.FindFirstValue(ClaimTypes.GivenName) ?? "",
+                result.Principal.FindFirstValue(ClaimTypes.Surname) ?? "", email ?? "",
+                Hashing.HashPassword($"{result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)}{DateTime.Now}"),
+                Hashing.HashPassword($"{result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)}{DateTime.Now}"),
+                DateTime.Now.ToString(CultureInfo.CurrentCulture));
+            await _context.AddAsync(user);
+            await _context.SaveChangesAsync();
+            userFound = user;
+        }
+
+        HttpContext.Session.SetString("userFirstName", userFound.FirstName ?? "");
+        HttpContext.Session.SetString("userLastName", userFound.LastName ?? "");
+        HttpContext.Session.SetString("userEmail", userFound.Email ?? "");
+       
+
+        return Redirect("/");
+}
+
 }

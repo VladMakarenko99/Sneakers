@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Register";
     Layout = null;
+    ViewBag.GoogleAuthUrl = "/account/google-login";
 }
 <!doctype html>
 <html lang="en">
@@ -60,6 +61,7 @@
             <input type="submit" class="button" value="Register" />
         </form>
         <span>Already have an account? </span><a asp-controller="Account" asp-action="Login" id="login">Log in</a>
+        <p><a href="@ViewBag.GoogleAuthUrl">Register with Google</a></p>
     </div>
     <script>const showPassword1 = document.querySelector("#show1");
         const showPassword2 = document.querySelector("#show2");
