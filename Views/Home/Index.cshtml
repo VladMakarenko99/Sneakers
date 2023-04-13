@@ -16,24 +16,26 @@
 
 <body>
     <div class="sidenav">
-        <partial name="_filters"/>
+        <partial name="_filters" />
     </div>
     <div class="main-content">
         <div class="product-grid">
-            @foreach (var item in Model)
-            {
-                item.Name = item.Name?.Replace(' ', '-');
+            @foreach (var item in Model){
                 <div class="product">
-                    <a href="/@item.Name"><img src="@item.Image" alt="img" /></a>
                     @{
-                        item.Name = item.Name?.Replace('-', ' ');
+                        string src = $"http://localhost:8000/api/images/{item.Image}.jpeg";
+                        src = src.Replace(' ', '-');
+                        item.Name = item.Name?.Replace(' ', '-');
                     }
-                    <h3>@item.Name</h3>
+                    <a href="/@item.Name"><img src="@src" alt="img" /></a>
+                    <h3>@item.Name?.Replace('-', ' ')</h3>
                     <p>@item.Price $</p>
                 </div>
             }
+
         </div>
     </div>
 
 </body>
+
 </html>

@@ -31,6 +31,7 @@ body {
     display: block;
     width: 100%;
     height: 65%;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .product h3 {
@@ -192,22 +193,6 @@ body {
     text-align: left;
     width: 100%;
 }
-
-#URL {
-    display: block;
-    margin: auto;
-    margin-top: 20px;
-    background-color: rgb(219, 219, 219);
-    color: #376581;
-    text-decoration: none;
-    border-radius: 5px;
-    border: 2px solid #444444;
-    width: 30%;
-    text-align: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
 .wrapper {
     position: relative;
     width: 200px;
@@ -235,9 +220,9 @@ input[type="range"] {
     bottom: 0;
     background-color: transparent;
     pointer-events: none;
-}
+ }
 
-.slider-track {
+.filters .filter .wrapper .container .slider-track {
     width: 100%;
     height: 4px;
     position: absolute;
@@ -245,7 +230,7 @@ input[type="range"] {
     top: 0;
     bottom: 0;
     border-radius: 5px;
-    background-color: #c0c0c0a6;
+    background-color: rgb(215, 215, 215);
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
@@ -323,4 +308,38 @@ input[type="range"]:active::-webkit-slider-thumb {
     bottom: -14px;
     left: 0;
     right: 0;
+}
+
+.search{
+    align-items: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-position: right 12px center;
+    background-repeat: no-repeat,repeat;
+    background-size: 14px 9px;
+    border: 1.3px solid #828282;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #221f1f;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 14px;
+    height: 32px;
+    margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    padding-left: 12px;
+    padding-right: 40px;
+    text-align: left;
+    width: 100%;
+}
+
+#search-icon{
+    position: relative;
+    right: -170px;
+    top: -26px;
+    width: 20px;
+    height: 20px;
 }

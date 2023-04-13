@@ -1,6 +1,8 @@
 @model practice.Models.Item
 @{
     ViewData["Title"] = Model?.Name;
+    string src = $"http://localhost:8000/api/images/{Model?.Image}.jpeg";
+    src = src.Replace(" ", "-");
 }
 
 <!doctype html>
@@ -18,7 +20,7 @@
 <body>
     <div class="container">
         <div class="product-image">
-            <img src="@Model?.Image" />
+            <img src="@src" />
         </div>
         <div class="product-info">
               <h2 class="product-name">@Model?.Name</h2>

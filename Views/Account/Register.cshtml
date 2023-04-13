@@ -1,6 +1,6 @@
 @model practice.Models.User;
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Log In";
     Layout = null;
     ViewBag.GoogleAuthUrl = "/account/google-login";
 }
@@ -18,7 +18,7 @@
     <title>@ViewData["Title"]</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/account.css">
-    <link rel="shortcut icon" type="image/x-icon" href="~/img/IMG_8604.PNG"/>
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/IMG_8604.PNG" />
 </head>
 
 <body>
@@ -61,7 +61,14 @@
             <input type="submit" class="button" value="Register" />
         </form>
         <span>Already have an account? </span><a asp-controller="Account" asp-action="Login" id="login">Log in</a>
-        <p><a href="@ViewBag.GoogleAuthUrl">Register with Google</a></p>
+        @* <p><a href="@ViewBag.GoogleAuthUrl">Register with Google</a></p> *@
+        <a class="google-btn" href="@ViewBag.GoogleAuthUrl">
+            <div class="google-icon-wrapper">
+                <img class="google-icon"
+                    src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+            </div>
+            <p class="btn-text">Continue with Google</p>
+        </a>
     </div>
     <script>const showPassword1 = document.querySelector("#show1");
         const showPassword2 = document.querySelector("#show2");

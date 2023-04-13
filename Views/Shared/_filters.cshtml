@@ -33,7 +33,7 @@
                 </span>
             </div>
             <div class="container">
-                <div class="slider-track" style="background-color: grey;"></div>
+                <div class="slider-track"></div>
                 <input type="range" min="0" max="200" value="0" id="slider-1" oninput="slideOne()">
                 <input type="range" min="0" max="200" value="200" id="slider-2" oninput="slideTwo()">
             </div>
@@ -47,7 +47,12 @@
             <option value="descending">Descending</option>
         </select>
     </div>
-    <a href="" id="URL">OK</a>
+    <div class="filter">
+        <p>Search: </p>
+        <input type="text" id="search" class="search" placeholder="Search">
+            <img src="img/search.svg" id="search-icon" alt="">
+        </input>
+    </div>
 </div>
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="js/filter.js"></script>

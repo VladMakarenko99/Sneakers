@@ -87,13 +87,25 @@ body {
 
 .checkout {
     display: block;
-    background-color: aquamarine;
+    background-color: #376581;
     margin-top: 20px;
     text-decoration: none;
     color: white;
     padding: 10px 20px;
     border: none;
     cursor: pointer;
+}
+
+.clear{
+  display: block;
+  background-color: white;
+  margin-top: 20px;
+  text-decoration: none;
+  color: gray;
+  padding: 10px 20px;
+  font-weight: 500;
+  border: 1px solid gray;
+  cursor: pointer;
 }
 
 .title {

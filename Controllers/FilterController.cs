@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using practice.Data;
 using practice.Models;
+using System.Text.RegularExpressions;
 
 namespace practice.Controllers;
 
@@ -20,10 +21,11 @@ public class FilterController : Controller
         System.Console.WriteLine(url);
         var filteredList = new List<Item>();
         var filterStrings = url.Split("&").ToList();
+        System.Console.WriteLine(filterStrings.FindIndex(s => new Regex(@"brand=.+s").Match(s).Success));
 
         foreach (string filter in filterStrings)
         {
-            if (filter.Contains("brand=") && filteredList.Count == 0)
+            if (filter.Contains("brand=") && filteredList.Count == 0 && filterStrings.IndexOf(filter) == 0) 
                 filteredList = GetFilteredListByBrand(_context.Items.ToList(), filter);
         
             if (filter.Contains("brand=") && filteredList.Count > 0)
@@ -31,13 +33,15 @@ public class FilterController : Controller
             
             if (filter.Contains("price=") && filteredList.Count > 0)
             {
+                System.Console.WriteLine("FILTEERING FROM LIST");
                 var min = GetMinAndMaxPrice(filter)[0];
                 var max = GetMinAndMaxPrice(filter)[1];
                 filteredList = filteredList.Where(x => x.Price >= min && x.Price <= max).ToList();
             }
 
-            if (filter.Contains("price=") && filteredList.Count == 0)
+            if (filter.Contains("price=") && filteredList.Count == 0 &&  filterStrings.IndexOf(filter) == 0)
             {
+                System.Console.WriteLine("FILTERING FROM DATABSE");
                 var min = GetMinAndMaxPrice(filter)[0];
                 var max = GetMinAndMaxPrice(filter)[1];
                 filteredList = _context.Items.Where(x => x.Price >= min && x.Price <= max).ToList();
@@ -51,13 +55,18 @@ public class FilterController : Controller
                 if(sort == "descending")
                     filteredList = filteredList.OrderByDescending(x => x.Price).ToList();
             }
-            if(filter.Contains("sort=") && filteredList.Count == 0)
+            if(filter.Contains("sort=") && filteredList.Count == 0 && filterStrings.IndexOf(filter) == 0)
             {
                 var sort = filter.Split("sort=")[1];
                 if(sort == "ascending")
                     filteredList = _context.Items.OrderBy(x => x.Price).ToList();
                 if(sort == "descending")
                     filteredList = _context.Items.OrderByDescending(x => x.Price).ToList();
+            }
+            if(filter.Contains("search=")){
+                string search = filter.Split("search=")[1].ToLower().Replace("-", " ");
+                filteredList = _context.Items.Where(x => x.Name!.ToLower().Contains(search)).ToList();
+            
             }
         }
 

@@ -1,18 +1,25 @@
 @using System.Text;
 @using System.Text.Json;
+@using practice.Data;
 <link rel="stylesheet" href="css/site.css" />
 
 @{
-    var bytes = Context.Session.Get("cartItems");
-    if(bytes == null){
-        ViewBag.itemCount = 0;
+    if (Context.Session.GetString("userEmail") == null)
+    {
+        var bytes = Context.Session.Get("cartItems");
+        if (bytes == null)
+        {
+            ViewBag.itemCount = 0;
+        }
+        else
+        {
+            var json = Encoding.UTF8.GetString(bytes);
+            var list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+            ViewBag.itemCount = list.Count;
+        }
     }
-    else{
-        var json = Encoding.UTF8.GetString(bytes);
-        var list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
-        ViewBag.itemCount =  list.Count;
-    }
-    
+
+
     ViewBag.userFirstName = Context.Session.GetString("userFirstName");
     ViewBag.userEmail = Context.Session.GetString("userEmail");
 
@@ -24,7 +31,7 @@
             <a href="/cart"><img class="cart" src="~/img/9021543_shopping_cart_simple_bold_icon.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
-        
+
     }
     else
     {

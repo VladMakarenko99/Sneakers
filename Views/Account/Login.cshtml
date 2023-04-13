@@ -42,8 +42,13 @@
         </form>
         <span>Still don`t have an account? </span><a asp-controller="Account" asp-action="Register"
             id="login">Register</a>
-        <p><a href="@ViewBag.GoogleAuthUrl">Register with Google</a></p>
-
+         <a class="google-btn" href="@ViewBag.GoogleAuthUrl">
+            <div class="google-icon-wrapper">
+                <img class="google-icon"
+                    src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+            </div>
+            <p class="btn-text">Continue with Google</p>
+        </a>
     </div>
     <script>
         const showPassword = document.querySelector("#show");

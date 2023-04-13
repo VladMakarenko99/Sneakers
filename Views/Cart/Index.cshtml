@@ -1,5 +1,6 @@
 @using System.Text;
 @using System.Text.Json;
+@model List<Item>
 @{
     ViewData["Title"] = "Cart";
 }
@@ -10,8 +11,7 @@
 <h1 class="title">@ViewData["Title"]</h1>
 <div class="main">
     @{
-        var bytes = Context.Session.Get("cartItems");
-        if (bytes == null)
+        if (Model.Count == 0)
         {
             <div class="no-items">
                 <h1 class="text">There is any items in your cart</h1>
@@ -20,12 +20,12 @@
         }
         else
         {
-            var json = Encoding.UTF8.GetString(bytes);
-            var list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
             <section class="product-list">
-                @foreach (Item item in list)
+                @foreach (Item item in Model)
                 {
-                    string src = "img/" + item.Image?.Replace("img/", "")?.Replace(".jpeg", "") + ".jpeg" ?? "";
+                    @* string src = "img/" + item.Image?.Replace("img/", "")?.Replace(".jpeg", "") + ".jpeg" ?? ""; *@
+                    string src = $"http://localhost:8000/api/images/{item.Image}.jpeg";
+                    src = src.Replace(' ', '-');
                     <div class="product">
                         <img src="@src" alt="product1" class="child img">
                         <h2 class="child" style="color: green">$ @item.Price</h2>
@@ -40,7 +40,7 @@
                     <h3 class="child">Total:</h3>
                     <span class="child price">$@ViewBag.totalPrice</span>
                 </div>
-                <a asp-controller="Cart" asp-action="Clear" >Clear Cart</a>
+                <a asp-controller="Cart" asp-action="Clear" class="clear">Clear Cart</a>
                 <a href="/checkout" class="checkout">Buy</a>
             </div>
         }

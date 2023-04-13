@@ -1,18 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using practice.Data;
-using System;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore;
-
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -44,17 +34,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                options.ClientSecret = "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";
 
            });
-
-// builder.Services.AddCookiePolicy(options =>
-// {
-//     options.CheckConsentNeeded = context => true;
-//     options.MinimumSameSitePolicy = SameSiteMode.None;
-//     options.Secure = CookieSecurePolicy.SameAsRequest;
-
-// });
-
-
-
 
 WebApplication app = builder.Build();
 

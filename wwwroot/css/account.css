@@ -1,7 +1,8 @@
-.form .input.input-validation-error {        
+.form .input.input-validation-error {
     border-color: red;
     margin-bottom: 7px;
 }
+
 .fa-eye {
     font-size: 20px;
     color: #bababa;
@@ -111,4 +112,46 @@ body {
 #login:hover {
     text-decoration: underline;
     text-decoration-color: #376581;
+}
+
+.google-btn {
+    display: block;
+    margin-top: 20px;
+    width: 240px;
+    height: 45px;
+    border-radius: 5px;
+    border: 1.7px solid #919090;
+    /*box-shadow: 0 3px 4px 2px rgba(0, 0, 0, .15); */
+}
+
+.google-icon-wrapper {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #fff
+}
+
+.google-icon {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    margin: 10px;
+
+}
+
+.btn-text {
+    float: right;
+    color: #1b1b1b;
+    text-decoration: none;
+    margin-top: 9px;
+    margin-right: 15px;
+}
+
+.google-btn:hover {
+    background-color: #eeeded;
+}
+
+.google-btn:hover .google-icon-wrapper {
+    background-color: #eeeded;
 }

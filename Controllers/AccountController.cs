@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using practice.Data;
 using practice.Models;
-using System;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

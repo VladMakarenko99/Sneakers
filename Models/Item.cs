@@ -12,13 +12,7 @@ public class Item
 
     public int? Size { get; set; }
 
-    private string? _image;
-    public string? Image
-    {
-        get => $"img/{_image}.jpeg";
-
-        set => _image = value;
-    }
+    public string? Image { get; set; }
 
     public int BrandId { get; set; }
 

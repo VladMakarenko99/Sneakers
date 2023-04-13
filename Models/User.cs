@@ -17,7 +17,8 @@ namespace practice.Models
         public string? ConfirmedPass { get; set; } 
         
         public string? Salt { get; set; }
-		
+
+		public string? CartItemsJson { get; set; } 		
         public User()
 		{
 		}

@@ -30,7 +30,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index(int page)
     {
         var totalCount = await _context.Items.CountAsync();
-        ViewBag.totalPages = (int)Math.Ceiling(totalCount / 4.0);
+        //ViewBag.totalPages = (int)Math.Ceiling(totalCount / 4.0);
         var list = await _context.Items.Skip((page - 1) * 4).Take(4).ToListAsync();
         return View(list);
     }
@@ -49,4 +49,15 @@ public class HomeController : Controller
         return item == null ? NotFound() : View(item);
     }
 
+
+    [Route("/api/images/{imageName}.jpeg")]
+    [HttpGet]
+    public IActionResult GetImage(string imageName)
+    {
+        imageName = imageName.Replace('-', ' ');
+        byte[] imageBytes = System.IO.File.ReadAllBytes($"wwwroot/img/{imageName}.jpeg");
+        string contentType = "image/jpeg";
+
+        return File(imageBytes, contentType);
+    }
 }

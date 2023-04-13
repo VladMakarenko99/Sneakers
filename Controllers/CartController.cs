@@ -21,14 +21,46 @@ namespace practice.Controllers
         public IActionResult Index()
         {
             ViewBag.totalPrice = HttpContext.Session.GetInt32("totalPrice");
-            return View();
+            string? email = HttpContext.Session.GetString("userEmail");
+            if (email != null)
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Email == email);
+                if (user!.CartItemsJson != null)
+                {
+                    var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
+                    HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(CartList)));
+                }
+                return View(GetSessionList("cartItems"));
+            }
+
+            return View(GetSessionList("cartItems"));
         }
 
 
         [Route("/Cart/AddToCart")]
         [HttpPost]
-        public RedirectResult AddToCart(Item item)
+        public async Task<RedirectResult> AddToCart(Item item)
         {
+            if (HttpContext.Session.Get("userEmail") != null)
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
+                if (user!.CartItemsJson != null && user.CartItemsJson != "")
+                {
+                    System.Console.WriteLine("GET IN");
+                    var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
+                    CartList!.Add(item);
+                    user.CartItemsJson = JsonSerializer.Serialize(CartList);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    System.Console.WriteLine("GET OUT");
+                    var CartList = new List<Item>();
+                    CartList.Add(item);
+                    user!.CartItemsJson = JsonSerializer.Serialize(CartList);
+                    await _context.SaveChangesAsync();
+                }
+            }
             var list = GetSessionList("cartItems");
 
             list.Add(item);
@@ -43,6 +75,17 @@ namespace practice.Controllers
         [Route("/DeleteItem/{id}")]
         public RedirectResult DeleteItem(int id)
         {
+            if(HttpContext.Session.Get("userEmail") != null)
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
+                if (user!.CartItemsJson != null && user.CartItemsJson != "")
+                {
+                    var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
+                    CartList!.Remove(CartList.Find(x => x.Id == id)!);
+                    user.CartItemsJson = JsonSerializer.Serialize(CartList);
+                    _context.SaveChanges();
+                }
+            }
             var list = GetSessionList("cartItems");
 
             Item item = list.Find(x => x.Id == id) ?? new Item();
@@ -100,13 +143,13 @@ namespace practice.Controllers
                 Items = GetSessionList("cartItems"),
                 TotalPrice = order.TotalPrice
             };
-            if(checkout.Delivery == Delivery.Dhl)
+            if (checkout.Delivery == Delivery.Dhl)
                 checkout.TotalPrice += 12;
 
             foreach (var item in checkout.Items)
                 order_desc += item.Name + $"(Size: {item.Size}), ";
-            
-            
+
+
             Config.MerchantId = 1396424;
             Config.SecretKey = "test";
 
