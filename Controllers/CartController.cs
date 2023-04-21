@@ -3,8 +3,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using practice.Data;
 using practice.Models;
-using CloudIpspSDK;
-using CloudIpspSDK.Checkout;
+using Stripe.Checkout;
+using Stripe;
 
 namespace practice.Controllers
 {
@@ -27,8 +27,14 @@ namespace practice.Controllers
                 var user = _context.Users.FirstOrDefault(x => x.Email == email);
                 if (user!.CartItemsJson != null)
                 {
+
                     var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
                     HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(CartList)));
+                    int TotalPrice = 0;
+                    foreach (var item in CartList!)
+                        TotalPrice += item.Price;
+                    HttpContext.Session.SetInt32("totalPrice", TotalPrice);
+                    ViewBag.totalPrice = HttpContext.Session.GetInt32("totalPrice");
                 }
                 return View(GetSessionList("cartItems"));
             }
@@ -46,7 +52,8 @@ namespace practice.Controllers
                 var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
                 if (user!.CartItemsJson != null && user.CartItemsJson != "")
                 {
-                    System.Console.WriteLine("GET IN");
+                    int count = HttpContext.Session.GetInt32("LoginedUserProductCount") ?? 0;
+                    HttpContext.Session.SetInt32("LoginedUserProductCount", count + 1);
                     var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
                     CartList!.Add(item);
                     user.CartItemsJson = JsonSerializer.Serialize(CartList);
@@ -54,12 +61,18 @@ namespace practice.Controllers
                 }
                 else
                 {
-                    System.Console.WriteLine("GET OUT");
+                    int count = HttpContext.Session.GetInt32("LoginedUserProductCount") ?? 0;
+                    HttpContext.Session.SetInt32("LoginedUserProductCount", count + 1);
                     var CartList = new List<Item>();
                     CartList.Add(item);
                     user!.CartItemsJson = JsonSerializer.Serialize(CartList);
                     await _context.SaveChangesAsync();
                 }
+            }
+            else
+            {
+                int count = HttpContext.Session.GetInt32("LoginedUserProductCount") ?? 0;
+                HttpContext.Session.SetInt32("LoginedUserProductCount", count + 1);
             }
             var list = GetSessionList("cartItems");
 
@@ -73,9 +86,9 @@ namespace practice.Controllers
         }
 
         [Route("/DeleteItem/{id}")]
-        public RedirectResult DeleteItem(int id)
+        public async Task<RedirectResult> DeleteItem(int id)
         {
-            if(HttpContext.Session.Get("userEmail") != null)
+            if (HttpContext.Session.Get("userEmail") != null)
             {
                 var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
                 if (user!.CartItemsJson != null && user.CartItemsJson != "")
@@ -83,7 +96,7 @@ namespace practice.Controllers
                     var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
                     CartList!.Remove(CartList.Find(x => x.Id == id)!);
                     user.CartItemsJson = JsonSerializer.Serialize(CartList);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }
             var list = GetSessionList("cartItems");
@@ -96,15 +109,25 @@ namespace practice.Controllers
             totalPrice -= item.Price;
             HttpContext.Session.SetInt32("totalPrice", totalPrice);
 
+            int count = HttpContext.Session.GetInt32("LoginedUserProductCount") ?? 0;
+            HttpContext.Session.SetInt32("LoginedUserProductCount", count - 1);
+
             if (!list.Any())
-                Clear();
+                await Clear();
 
             return Redirect("/cart");
         }
-        public RedirectResult Clear()
+        public async Task<RedirectResult> Clear()
         {
+            if (HttpContext.Session.Get("userEmail") != null)
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
+                user!.CartItemsJson = null;
+                await _context.SaveChangesAsync();
+            }
             HttpContext.Session.Remove("cartItems");
             HttpContext.Session.Remove("totalPrice");
+            HttpContext.Session.Remove("LoginedUserProductCount");
 
             return Redirect("/cart");
         }
@@ -127,11 +150,11 @@ namespace practice.Controllers
         }
 
         [HttpPost]
-        public RedirectResult Pay(Order order)
+        public IActionResult Pay(Order order)
         {
-            string url = "/";
+            //string url = "/";
             string order_desc = "";
-            var checkout = new Order
+            var checkoutOrder = new Order
             {
                 Id = Guid.NewGuid(),
                 FirstName = order.FirstName,
@@ -139,35 +162,31 @@ namespace practice.Controllers
                 Email = order.Email,
                 Town = order.Town,
                 Address = order.Address,
-                Delivery = order.Delivery,
                 Items = GetSessionList("cartItems"),
                 TotalPrice = order.TotalPrice
             };
-            if (checkout.Delivery == Delivery.Dhl)
-                checkout.TotalPrice += 12;
-
-            foreach (var item in checkout.Items)
+            foreach (var item in checkoutOrder.Items)
                 order_desc += item.Name + $"(Size: {item.Size}), ";
 
-
-            Config.MerchantId = 1396424;
-            Config.SecretKey = "test";
-
-            var req = new CheckoutRequest
+            PaymentIntentCreateOptions options = new PaymentIntentCreateOptions
             {
-                order_id = Guid.NewGuid().ToString("N"),
-                amount = Convert.ToInt32(checkout.TotalPrice) * 100,
-                order_desc = order_desc.Substring(0, order_desc.Length - 2),
-                currency = "USD",
-                lang = "en",
-                sender_email = checkout.Email
+                Amount = checkoutOrder.TotalPrice,
+                Currency = "usd",
+                PaymentMethodTypes = new List<string> { "card" }
             };
-            var resp = new Url().Post(req);
-            if (resp.Error == null)
-            {
-                url = resp.checkout_url;
-            }
-            return Redirect(url);
+
+            var service = new PaymentIntentService();
+            var intent = service.Create(options);
+
+            return Json(intent.ClientSecret);
+        }
+
+        [Route("/checkout/success")]
+        public async Task<IActionResult> Success()
+        {
+            var api =
+            await Clear();
+            return View();
         }
 
         public List<Item> GetSessionList(string sessionKey)

@@ -9,6 +9,9 @@ using practice.Data;
 using practice.Models;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using practice.Controllers;
+using System.Text.Json;
+using System.Text;
 
 namespace practice.Controllers;
 
@@ -16,7 +19,10 @@ public class AccountController : Controller
 {
     private readonly AppDbContext _context;
 
-    public AccountController(AppDbContext context) => this._context = context;
+    public AccountController(AppDbContext context)
+    {
+        this._context = context;
+    }
 
 
     [Route("/account/register")]
@@ -135,6 +141,19 @@ public class AccountController : Controller
         return View("Login", model);
     }
 
+    public List<Item> GetSessionList(string sessionKey)
+    {
+        var bytes = HttpContext.Session.Get(sessionKey) ?? Array.Empty<byte>();
+        string json = Encoding.UTF8.GetString(bytes);
+        var list = new List<Item>();
+
+        if (!string.IsNullOrEmpty(json))
+        {
+            list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+        }
+        return list;
+    }
+
     public RedirectResult Logout()
     {
         HttpContext.Session.Remove("userFirstName");
@@ -182,7 +201,7 @@ public class AccountController : Controller
 
 
     [Route("/account/google-response")]
-    public  async Task<IActionResult> GoogleResponse()
+    public async Task<IActionResult> GoogleResponse()
     {
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -209,9 +228,9 @@ public class AccountController : Controller
         HttpContext.Session.SetString("userFirstName", userFound.FirstName ?? "");
         HttpContext.Session.SetString("userLastName", userFound.LastName ?? "");
         HttpContext.Session.SetString("userEmail", userFound.Email ?? "");
-       
+
 
         return Redirect("/");
-}
+    }
 
 }

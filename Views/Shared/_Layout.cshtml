@@ -1,34 +1,30 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="css/site.css"/>
-    <link rel="shortcut icon" type="image/x-icon" href="img/IMG_8604.PNG"/>
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="img/IMG_8604.PNG" />
 </head>
+
 <body>
-<header>
-    <div class="header-left">
-        <img id="logo" src="~/img/sneaker.png"/>
-        <h1 class="header-title"><a href="/">Sneakers</a></h1>
+    <div id="content">
+        <header>
+            <div class="header-left">
+                <img id="logo" src="~/img/sneaker.png" />
+                <h1 class="header-title"><a href="/">Sneakers</a></h1>
+            </div>
+            <div class="header-right">
+                <partial name="_auth" />
+            </div>
+        </header>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        <div id="overlay"></div>
     </div>
-    <div class="header-right">
-        <partial name="_auth"/>
-    </div>
-</header>
-<main role="main" class="pb-3">
-    @RenderBody()
-</main>
-    @* <footer id="footer">
-    <div class="socials">
-        <a href="https://www.instagram.com/_makarenko_vlad_/" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/747/747393.png?w=1380&t=st=1667943750~exp=1667944350~hmac=ced94658e4a9a533eaacebe08dd59d610ff46e2632aa2f9747c7f8626d78db6b" alt="inst"></a>
-        <a href="https://t.me/vladislav067" target="_blank"><img src="https://img.freepik.com/free-icon/telegram_318-245580.jpg?size=338&ext=jpg&ga=GA1.2.1818422078.1667943716&semt=sph" alt="telegram"></a>
-        <a href="" target="_blank"><img src="https://img.freepik.com/free-icon/viber_318-397053.jpg?size=338&ext=jpg&ga=GA1.2.1818422078.1667943716&semt=sph" alt="viber"></a>
-    </div>
-    <p>All rights reserved ©</p>
-    </footer> *@
-    <div id="overlay"></div>
 </body>
 <script src="~/js/site.js"></script>
 </html>

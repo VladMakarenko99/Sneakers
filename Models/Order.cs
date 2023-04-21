@@ -18,16 +18,9 @@ namespace practice.Models
         public string? Town { get; set; }
 
         public string? Address { get; set; } 
-
-        public Delivery? Delivery { get; set; }
-
+        
         public List<Item>? Items { get; set; }
 
         public int? TotalPrice { get; set; }   
-    }
-
-    public enum Delivery{
-        Fedex,
-        Dhl
     }
 }

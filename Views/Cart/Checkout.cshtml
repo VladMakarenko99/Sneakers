@@ -42,25 +42,6 @@
 
 			<input type="hidden" id="totalHidden" asp-for="TotalPrice" value="@ViewBag.totalPrice">
 
-			<label for="delivery">Delivery:</label>
-			<div class="delivery-options">
-				<div class="delivery-option">
-					<input type="radio" id="fedex" name="Delivery" asp-for="Delivery" value="Fedex" required>
-					@* <img
-					src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/FedEx_Express.svg/150px-FedEx_Express.svg.png?20111008234129"
-					alt="FedEx logo"> *@
-					<label for="fedex">FedEx</label>
-					@* <span class="delivery-price">Free</span> *@
-				</div>
-				<div class="delivery-option">
-					<input type="radio" id="dhl" name="Delivery" asp-for="Delivery" value="Dhl" required>
-					@* <img
-					src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/DHL_Logo.svg/352px-DHL_Logo.svg.png?20220604145109"
-					alt="DHL logo"> *@
-					<label for="dhl">DHL</label>
-					@* <span class="delivery-price">$12</span> *@
-				</div>
-			</div>
 
 			<button type="submit" id="submit">Submit</button>
 		</form>
@@ -93,28 +74,3 @@
 		</div>
 	</div>
 </div>
-<script>
-	var rightOption = document.getElementById("dhl");
-	var leftOption = document.getElementById("fedex");
-	var resultElement = document.getElementById("result");
-	var total = document.getElementById("total");
-	let totalHidden = document.querySelector("totalHidden");
-
-	rightOption.addEventListener("change", setVariable);
-	leftOption.addEventListener("change", setVariable);
-
-	function setVariable() {
-		var myVar;
-		if (rightOption.checked) {
-			myVar = 12;
-		} else if (leftOption.checked) {
-			myVar = 0;
-		}
-		resultElement.innerHTML = myVar;
-		var subtotal = parseInt(document.getElementById("subtotal").innerHTML.match(/\d+/)[0]);
-		var delivery = parseInt(resultElement.innerHTML);
-		total.innerHTML = "$" + (subtotal + delivery);
-	@* totalHidden.value = subtotal + delivery; *@
-			totalHidden.setAttributeNs("value", subtotal + delivery);
-	}
-</script>

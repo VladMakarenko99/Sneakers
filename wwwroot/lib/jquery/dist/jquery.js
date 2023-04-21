@@ -130,7 +130,7 @@ var document = window.document;
 				}
 			}
 		}
-		doc.head.appendChild( script ).parentNode.removeChild( script );
+		//doc.head.appendChild( script ).parentNode.removeChild( script );
 	}
 
 

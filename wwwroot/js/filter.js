@@ -1,4 +1,6 @@
-window.onload = function () {
+const checkboxes = document.querySelectorAll('.checkbox');
+let url = localStorage.getItem('url') || '';
+window.onload = function(){
     if (window.location.pathname === "/") {
         localStorage.clear();
         document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
@@ -12,8 +14,6 @@ window.onload = function () {
     loadSearchValue();
 }
 
-const checkboxes = document.querySelectorAll('.checkbox');
-let url = localStorage.getItem('url') || '';
 
 function getCheckedValue(value) {
     return localStorage.getItem(value) === 'checked';
@@ -109,7 +109,8 @@ checkboxes.forEach((checkbox) => {
             window.location.href = "/";
             return;
         }
-        callAjax(updateUrlWithBranString(checkbox));
+        //callAjax(updateUrlWithBranString(checkbox));
+        window.location.href = updateUrlWithBranString(checkbox);
     });
 });
 
@@ -158,7 +159,8 @@ function formPriceString() {
 
     url = url.replace(/&+/g, "&");
 
-    callAjax(url);
+    // callAjax(url);
+    window.location.href = url;
     localStorage.setItem('url', url);
     localStorage.setItem("slider1Value", min);
     localStorage.setItem("slider2Value", max);
@@ -219,21 +221,24 @@ sorter.addEventListener("change", function (el) {
     }
     else if (url.includes("&sort=ascending&") || url.includes("&sort=descending&")) {
         url = url.replace(/&sort=\w+&/, "&" + sortString + "&")
-        callAjax(url);
+        //callAjax(url);
+        window.location.href = url;
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
     }
     else if (url.includes("&sort=")) {
         url = url.replace(/&sort=\w+$/gm, "&" + sortString);
-        callAjax(url);
+        //callAjax(url);
+        window.location.href = url;
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
     }
     else if (url.includes("q:sort=")) {
         url = url.replace(/q:sort=\w+/gm, "q:" + sortString);
-        callAjax(url);
+        //callAjax(url);
+        window.location.href = url;
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
@@ -241,7 +246,8 @@ sorter.addEventListener("change", function (el) {
     else {
         url = url + "&" + sortString;
     }
-    callAjax(url);
+    // callAjax(url);
+    window.location.href = url;
     localStorage.setItem('url', url);
     localStorage.setItem("sortValue", el.target.value);
 });
@@ -257,16 +263,20 @@ const search = document.getElementById("search");
 const ok = document.getElementById("OK");
 search.addEventListener("keyup", function (el) {
     const searchValue = el.target.value;
-    if(searchValue === ""){
+    if (searchValue === "") {
         search.value = "";
         localStorage.removeItem("searchValue");
         search.focus();
         window.location.href = "/";
         return;
-    }       
+    }
     localStorage.setItem("searchValue", searchValue);
     const newUrl = "/q:search=" + searchValue;
     history.pushState(null, null, newUrl);
+    setTimeout(function () {
+        window.location.reload();
+        search.focus();
+    }, 1000);
 });
 
 function loadSearchValue() {
@@ -277,23 +287,8 @@ function loadSearchValue() {
     }
 }
 
-let timeoutId = null;
-search.addEventListener("keyup", function () {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(callAjax(window.location.href), 800);
-});
-
-function callAjax(urlString) {
-    history.pushState(null, null, urlString);
-    $.ajax({
-        url: urlString,
-        type: 'GET',
-        dataType: 'html', 
-        success: function (result) {
-            $('.main-content').html(result); 
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
-}
+// let timeoutId = null;
+// search.addEventListener("keyup", function () {
+//     clearTimeout(timeoutId);
+//     timeoutId = setTimeout(document.location.reload(), 2000);
+// });
