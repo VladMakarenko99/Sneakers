@@ -19,7 +19,7 @@ namespace practice.Models
 
         public string? Address { get; set; } 
         
-        public List<Item>? Items { get; set; }
+        public string? ItemsJson { get; set; }
 
         public int? TotalPrice { get; set; }   
     }

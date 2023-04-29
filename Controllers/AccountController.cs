@@ -9,7 +9,6 @@ using practice.Data;
 using practice.Models;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using practice.Controllers;
 using System.Text.Json;
 using System.Text;
 
@@ -102,7 +101,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(LoginModel model)
+    public async Task<IActionResult> Login(LoginModel model)
     {
         if (string.IsNullOrEmpty(model.Email))
             ModelState.AddModelError(nameof(model.Email), "This field is required!");
@@ -128,6 +127,8 @@ public class AccountController : Controller
                 EnableSsl = true
             };
 
+            await ResetCartData(userFound);
+
             client.Send("i.e 3aeccdb09f-0167be+1@inbox.mailtrap.io", Convert.ToString(userFound.Email)!,
                 $@"Login is successful, {userFound.FirstName} {userFound.LastName}!", "");
 
@@ -139,19 +140,6 @@ public class AccountController : Controller
         ModelState.AddModelError(nameof(model.Password), "Incorrect login or password!");
 
         return View("Login", model);
-    }
-
-    public List<Item> GetSessionList(string sessionKey)
-    {
-        var bytes = HttpContext.Session.Get(sessionKey) ?? Array.Empty<byte>();
-        string json = Encoding.UTF8.GetString(bytes);
-        var list = new List<Item>();
-
-        if (!string.IsNullOrEmpty(json))
-        {
-            list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
-        }
-        return list;
     }
 
     public RedirectResult Logout()
@@ -190,8 +178,6 @@ public class AccountController : Controller
     [Route("/account/google-login")]
     public IActionResult GoogleLogin()
     {
-        Console.WriteLine(Url.Action("GoogleResponse"));
-
         var authProperties = new AuthenticationProperties
         {
             RedirectUri = Url.Action("GoogleResponse")
@@ -215,11 +201,14 @@ public class AccountController : Controller
 
         if (userFound == null)
         {
-            var user = new User(result.Principal.FindFirstValue(ClaimTypes.GivenName) ?? "",
-                result.Principal.FindFirstValue(ClaimTypes.Surname) ?? "", email ?? "",
+            var user = new User(
+                result.Principal.FindFirstValue(ClaimTypes.GivenName) ?? "",
+                result.Principal.FindFirstValue(ClaimTypes.Surname) ?? "",
+                email ?? "",
                 Hashing.HashPassword($"{result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)}{DateTime.Now}"),
                 Hashing.HashPassword($"{result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)}{DateTime.Now}"),
-                DateTime.Now.ToString(CultureInfo.CurrentCulture));
+                DateTime.Now.ToString(CultureInfo.CurrentCulture)
+                );
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();
             userFound = user;
@@ -229,8 +218,51 @@ public class AccountController : Controller
         HttpContext.Session.SetString("userLastName", userFound.LastName ?? "");
         HttpContext.Session.SetString("userEmail", userFound.Email ?? "");
 
+        await ResetCartData(userFound);
 
         return Redirect("/");
     }
 
+
+    public async Task ResetCartData(User user)
+    {
+        if (user.CartItemsJson == null)
+        {
+            // HttpContext.Session.Remove("cartItems");
+            // HttpContext.Session.Remove("totalPrice");
+            // HttpContext.Session.SetInt32("LoginedUserProductCount", 0);
+            var bytes = HttpContext.Session.Get("cartItems") ?? null;
+            if (bytes != null)
+            {
+                string json = Encoding.UTF8.GetString(bytes);
+                user.CartItemsJson = json;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+        }
+        else
+        {
+            var list1 = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson)!;
+            var bytes = HttpContext.Session.Get("cartItems") ?? Array.Empty<byte>();
+            string json = Encoding.UTF8.GetString(bytes);
+            var list2 = new List<Item>();
+
+            if (!string.IsNullOrEmpty(json))
+            {
+                list2 = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+            }
+
+            list1.AddRange(list2);
+            int totalPrice = 0;
+            foreach (var item in list1)
+                totalPrice += item.Price;
+            HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(list1)));
+            HttpContext.Session.SetInt32("LoginedUserProductCount", list1!.Count);
+            HttpContext.Session.SetInt32("totalPrice", totalPrice);
+
+            user.CartItemsJson = JsonSerializer.Serialize(list1);
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

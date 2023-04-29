@@ -33,7 +33,6 @@ public class FilterController : Controller
             
             if (filter.Contains("price=") && filteredList.Count > 0)
             {
-                System.Console.WriteLine("FILTEERING FROM LIST");
                 var min = GetMinAndMaxPrice(filter)[0];
                 var max = GetMinAndMaxPrice(filter)[1];
                 filteredList = filteredList.Where(x => x.Price >= min && x.Price <= max).ToList();
@@ -41,7 +40,6 @@ public class FilterController : Controller
 
             if (filter.Contains("price=") && filteredList.Count == 0 &&  filterStrings.IndexOf(filter) == 0)
             {
-                System.Console.WriteLine("FILTERING FROM DATABSE");
                 var min = GetMinAndMaxPrice(filter)[0];
                 var max = GetMinAndMaxPrice(filter)[1];
                 filteredList = _context.Items.Where(x => x.Price >= min && x.Price <= max).ToList();
@@ -65,6 +63,11 @@ public class FilterController : Controller
             }
             if(filter.Contains("search=")){
                 string search = filter.Split("search=")[1].ToLower().Replace("-", " ");
+                if(Regex.IsMatch(search, @"\p{IsCyrillic}"))
+                {
+                    search = Translit(search);
+                    System.Console.WriteLine(search);
+                }
                 filteredList = _context.Items.Where(x => x.Name!.ToLower().Contains(search)).ToList();
             
             }
@@ -106,6 +109,17 @@ public class FilterController : Controller
 
         }
         return items;
+    }
+
+        public static string Translit(string str)
+    {
+        string[] lat_low = {"a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "\"", "y", "'", "e", "yu", "ya", "i"};
+        string[] rus_low = { "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я", "ай"};
+        for (int i = 0; i <= 32; i++)
+        {
+            str = str.Replace(rus_low[i],lat_low[i]);              
+        }
+        return str;
     }
 }
 

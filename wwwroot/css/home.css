@@ -336,6 +336,16 @@ input[type="range"]:active::-webkit-slider-thumb {
     width: 100%;
 }
 
+.press-enter{
+    position: relative;
+    top: -15px;
+    right: -2px;
+    font-size: 12px;
+    text-align: left;
+    color: #838383;
+    font-weight: 400;
+}
+
 #search-icon{
     position: relative;
     right: -170px;

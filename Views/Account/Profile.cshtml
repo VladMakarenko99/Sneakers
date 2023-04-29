@@ -13,13 +13,17 @@
 
 <div class="modal" id="modal">
     <div class="modal-header">
-        <div class="title">Are you sure you want to delete your account?</div>
-        <button data-close-button class="close-button">&times;</button>
+        <div class="title">Delete Account</div>
     </div>
-    @* <div class="modal-body">
-        Are you sure you want to delete your account?
-    </div> *@
-    <a asp-action="DeleteAccount" asp-controller="Account" class="button">Yes</a>
-      <span data-close-button class="button">No</span>
+    <div class="modal-text">
+        <p>
+            Are you sure you want to delete your account?
+            This will permanently erase your account.
+        </p>
+    </div>
+    <div class="modal-buttons">
+        <span data-close-button class="modal-button cancel">Cancel</span>
+        <a asp-action="DeleteAccount" asp-controller="Account" class="modal-button delete">Delete</a>
+    </div>
 </div>
 

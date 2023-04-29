@@ -21,23 +21,6 @@ namespace practice.Controllers
         public IActionResult Index()
         {
             ViewBag.totalPrice = HttpContext.Session.GetInt32("totalPrice");
-            string? email = HttpContext.Session.GetString("userEmail");
-            if (email != null)
-            {
-                var user = _context.Users.FirstOrDefault(x => x.Email == email);
-                if (user!.CartItemsJson != null)
-                {
-
-                    var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
-                    HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(CartList)));
-                    int TotalPrice = 0;
-                    foreach (var item in CartList!)
-                        TotalPrice += item.Price;
-                    HttpContext.Session.SetInt32("totalPrice", TotalPrice);
-                    ViewBag.totalPrice = HttpContext.Session.GetInt32("totalPrice");
-                }
-                return View(GetSessionList("cartItems"));
-            }
 
             return View(GetSessionList("cartItems"));
         }
@@ -150,7 +133,7 @@ namespace practice.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay(Order order)
+        public async Task<IActionResult> Pay(Order order)
         {
             //string url = "/";
             string order_desc = "";
@@ -162,29 +145,50 @@ namespace practice.Controllers
                 Email = order.Email,
                 Town = order.Town,
                 Address = order.Address,
-                Items = GetSessionList("cartItems"),
+                ItemsJson = GetSessionListJson("cartItems"),
                 TotalPrice = order.TotalPrice
             };
-            foreach (var item in checkoutOrder.Items)
-                order_desc += item.Name + $"(Size: {item.Size}), ";
+            foreach (var item in GetSessionList("cartItems"))
+                order_desc += item.Name + ", ";
 
-            PaymentIntentCreateOptions options = new PaymentIntentCreateOptions
+            _context.Orders.Add(checkoutOrder);
+            await _context.SaveChangesAsync();    
+
+            StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
+
+            var options = new SessionCreateOptions
             {
-                Amount = checkoutOrder.TotalPrice,
-                Currency = "usd",
-                PaymentMethodTypes = new List<string> { "card" }
+                SuccessUrl = $"http://localhost:8000/checkout/success/{checkoutOrder.Id}",
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        Quantity = 1,
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = checkoutOrder.TotalPrice * 100,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions{
+                                Name = order_desc.TrimEnd(new char[2]{',', ' '}),
+                                Description = "Payment for sneakers"
+                            }
+                        }
+                    },
+                },
+                CustomerEmail = checkoutOrder.Email,
+                Mode = "payment",
             };
-
-            var service = new PaymentIntentService();
+            var service = new SessionService();
             var intent = service.Create(options);
 
-            return Json(intent.ClientSecret);
+            Response.Headers.Add("Location", intent.Url);
+            
+            return Redirect(intent.Url);
         }
 
-        [Route("/checkout/success")]
-        public async Task<IActionResult> Success()
+        [Route("/checkout/success/{id}")]
+        public async Task<IActionResult> Success(string id)
         {
-            var api =
             await Clear();
             return View();
         }
@@ -200,6 +204,13 @@ namespace practice.Controllers
                 list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
             }
             return list;
+        }
+
+        public string GetSessionListJson(string sessionKey){
+            var bytes = HttpContext.Session.Get(sessionKey) ?? Array.Empty<byte>();
+            string json = Encoding.UTF8.GetString(bytes);
+
+            return json;
         }
     }
 }

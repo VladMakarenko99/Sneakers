@@ -1,18 +1,16 @@
-/* *, *::after, *::before {
-    box-sizing: border-box;
-  } */
-  
+
   .modal {
     position: fixed;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     transition: 200ms ease-in-out;
     border: 1px solid black;
-    border-radius: 10px;
+    border-radius: 15px;
     z-index: 10;
     background-color: white;
-    width: 500px;
+    width: 400px;
+    height: 300px;
     max-width: 80%;
   }
   
@@ -21,25 +19,55 @@
   }
   
   .modal-header {
-    padding: 10px 15px;
+    margin: auto;
+    margin-bottom: 14%;
+    width: 70%;
+    padding-top: 10%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    border-bottom: 1px solid black;
   }
   
   .modal-header .title {
-    font-size: 1.25rem;
+    font-size: 2rem;
     font-weight: bold;
   }
   
-  .modal-header .close-button {
+  .modal-text{
+    width: 80%;
+    font-size: 1.2rem;
+    margin: auto;
+    text-align: center;
+  }
+
+  .modal-buttons{
+    display: flex;
+    flex-direction: row;
+    border-top: 0.5px solid black;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .modal-button{
+    width: 50%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+  }
+
+  .modal-button.delete{
+    border-left: 0.5px solid black;
+    text-decoration: none;
+    color: rgb(243, 41, 41);
+  }
+
+  .modal-button.cancel{
     cursor: pointer;
-    border: none;
-    outline: none;
-    background: none;
-    font-size: 1.25rem;
-    font-weight: bold;
+    color: #376581;
+    font-weight: 500;
   }
   
   .modal-body {

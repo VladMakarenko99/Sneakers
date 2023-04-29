@@ -25,17 +25,6 @@ public class HomeController : Controller
         // ViewBag.totalPages = (int)Math.Ceiling(totalCount / 4.0);
         // var list = await _context.Items.Skip(0).Take(4).ToListAsync();
 
-        if (HttpContext.Session.GetString("userEmail") != null)
-        {
-            var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
-            if (user!.CartItemsJson != null && user.CartItemsJson != "")
-            {
-                var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
-                HttpContext.Session.SetInt32("LoginedUserProductCount", CartList!.Count);
-            }
-            else
-                HttpContext.Session.SetInt32("LoginedUserProductCount", 0);
-        }
         return View(list);
     }
 

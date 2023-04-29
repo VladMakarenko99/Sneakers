@@ -1,6 +1,6 @@
 const checkboxes = document.querySelectorAll('.checkbox');
 let url = localStorage.getItem('url') || '';
-window.onload = function(){
+window.onload = function () {
     if (window.location.pathname === "/") {
         localStorage.clear();
         document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
@@ -260,7 +260,6 @@ function loadSortValue() {
 }
 
 const search = document.getElementById("search");
-const ok = document.getElementById("OK");
 search.addEventListener("keyup", function (el) {
     const searchValue = el.target.value;
     if (searchValue === "") {
@@ -272,11 +271,15 @@ search.addEventListener("keyup", function (el) {
     }
     localStorage.setItem("searchValue", searchValue);
     const newUrl = "/q:search=" + searchValue;
-    history.pushState(null, null, newUrl);
-    setTimeout(function () {
+    history.pushState(null, null, newUrl.replace(/\s/g, '-'));
+});
+
+search.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && document.activeElement === search) {
+        localStorage.clear();
+        localStorage.setItem("searchValue", search.value)
         window.location.reload();
-        search.focus();
-    }, 1000);
+    }
 });
 
 function loadSearchValue() {
@@ -286,9 +289,3 @@ function loadSearchValue() {
         search.focus();
     }
 }
-
-// let timeoutId = null;
-// search.addEventListener("keyup", function () {
-//     clearTimeout(timeoutId);
-//     timeoutId = setTimeout(document.location.reload(), 2000);
-// });
