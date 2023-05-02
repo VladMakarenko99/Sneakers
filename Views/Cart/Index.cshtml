@@ -22,7 +22,7 @@
                 @foreach (Item item in Model)
                 {
                     @* string src = "img/" + item.Image?.Replace("img/", "")?.Replace(".jpeg", "") + ".jpeg" ?? ""; *@
-                    string src = $"http://localhost:8000/api/images/{item.Image}.jpeg";
+                    string src = $"http://localhost:8000/api/images/{item.Image}";
                     src = src.Replace(' ', '-');
                     <div class="product">
                         <img src="@src" alt="product1" class="child img">

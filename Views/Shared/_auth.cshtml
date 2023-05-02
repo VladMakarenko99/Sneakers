@@ -1,5 +1,5 @@
 @using System.Text;
-<link rel="stylesheet" href="css/site.css" />
+<link rel="stylesheet" href="~/css/site.css" />
 
 @{
     if (Context.Session.GetInt32("LoginedUserProductCount") == null){
@@ -16,7 +16,7 @@
         <a class="btn auth" href="/account/login">Log In</a>
         <a class="btn reg" href="/account/register">Register</a>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="~/img/9021543_shopping_cart_simple_bold_icon.svg" /></a>
+            <a href="/cart"><img class="cart" src="http://localhost:8000/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
 
@@ -26,7 +26,7 @@
         <a id="hello" href="/profile/@ViewBag.userEmail">Hello, @ViewBag.userFirstName</a>
         <a asp-controller="Account" asp-action="Logout" class="btn reg">Log Out</a>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="~/img/9021543_shopping_cart_simple_bold_icon.svg" /></a>
+            <a href="/cart"><img class="cart" src="http://localhost:8000/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
     }

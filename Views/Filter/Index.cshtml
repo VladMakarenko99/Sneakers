@@ -1,11 +1,13 @@
+@model List<Item>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@ViewBag.url</title>
-    <link rel="stylesheet" href="css/home.css" />
-    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="~/css/home.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
 <body>
@@ -23,23 +25,36 @@
         else
         {
             <div class="product-grid">
-    @foreach (var item in Model)
-        {
-            <div class="product">
-                @{
-                    string src = $"http://localhost:8000/api/images/{item.Image}.jpeg";
-                    src = src.Replace(' ', '-');
-                    item.Name = item.Name?.Replace(' ', '-');
+                @foreach (var item in Model)
+                {
+                    <div class="product">
+                        @{
+                            string src = $"http://localhost:8000/api/images/{item.Image}";
+                            src = src.Replace(' ', '-');
+                            item.Name = item.Name?.Replace(' ', '-');
+                        }
+                        <a href="/@item.Name"><img src="@src" alt="img" /></a>
+                        <h3>@item.Name?.Replace('-', ' ')</h3>
+                        <p>@item.Price $</p>
+                    </div>
                 }
-                <a href="/@item.Name"><img src="@src" alt="img" /></a>
-                <h3>@item.Name?.Replace('-', ' ')</h3>
-                <p>@item.Price $</p>
             </div>
-        }
-    </div>
+            @if (Model.Count != ViewBag.totalPageCount)
+            {
+                <a id="load-more" href="">Load more</a>
+            }
         }
     </div>
 </body>
-<script src="js/filter.js"></script>
+<script>
+    const loadButton = document.getElementById("load-more");
+    if(loadButton !== null){
+        loadButton.addEventListener('click', () => {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        localStorage.setItem('scrollPosition', scrollTop);
+        console.log(scrollTop);
+    });
+    }
+</script>
 
 </html>

@@ -1,4 +1,3 @@
-const checkboxes = document.querySelectorAll('.checkbox');
 let url = localStorage.getItem('url') || '';
 window.onload = function () {
     if (window.location.pathname === "/") {
@@ -8,18 +7,34 @@ window.onload = function () {
         });
         url = "";
     }
-
+    let div = document.querySelector('.product-grid');
+    if(window.location.pathname.includes('q:') && div !== null){
+        let elements = div.querySelectorAll('.product'); 
+        let count = elements.length + 4;
+        const load = document.getElementById("load-more");
+        if(window.location.pathname.includes('/load=') && load !== null)
+            load.href = window.location.pathname.replace(/\/load=\d+/gm, '/load=' + count);
+        else if (!window.location.pathname.includes('/load=') && load !== null)
+            load.href = window.location.pathname + '/load=' + count;
+    }
+    let scrollTop = localStorage.getItem('scrollPosition');
+    if (scrollTop !== null && window.location.pathname.includes("load=")) {
+        let num = Number(scrollTop);
+        window.scrollTo(0, num + 200);
+        console.log(scrollTop);
+    }
     loadSliderValues();
     loadSortValue();
     loadSearchValue();
 }
 
+const brandCheckboxes = document.querySelectorAll('.brand-checkbox');
 
-function getCheckedValue(value) {
+function getCheckedBrandValue(value) {
     return localStorage.getItem(value) === 'checked';
 }
 
-function setCheckedValue(value, checked) {
+function setCheckedBrandValue(value, checked) {
     if (checked) {
         localStorage.setItem(value, 'checked');
     } else {
@@ -44,7 +59,9 @@ function findBrandString(inputString) {
     return `brand=${validBrands.join('+')}`;
 }
 
-function updateUrlWithBranString(checkbox) {
+function updateUrlWithBrandString(checkbox) {
+    console.log("ENTER BRAND");
+
     let brandString = '';
     if (url !== '') {
         brandString = findBrandString(url);
@@ -100,19 +117,127 @@ function updateUrlWithBranString(checkbox) {
     return url;
 }
 
-checkboxes.forEach((checkbox) => {
+brandCheckboxes.forEach((checkbox) => {
     const value = checkbox.value;
-    checkbox.checked = getCheckedValue(value);
+    checkbox.checked = getCheckedBrandValue(value);
     checkbox.addEventListener('change', () => {
-        setCheckedValue(value, checkbox.checked);
-        if (updateUrlWithBranString(checkbox) === '') {
+        setCheckedBrandValue(value, checkbox.checked);
+        if (updateUrlWithBrandString(checkbox) === '') {
             window.location.href = "/";
             return;
         }
-        //callAjax(updateUrlWithBranString(checkbox));
-        window.location.href = updateUrlWithBranString(checkbox);
+        window.location.href = updateUrlWithBrandString(checkbox);
     });
 });
+
+
+const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+
+
+function getCheckedCategoryValue(value) {
+    return localStorage.getItem(value) === 'checked';
+}
+
+function setCheckedCategoryValue(value, checked) {
+    if (checked) {
+        localStorage.setItem(value, 'checked');
+    } else {
+        localStorage.removeItem(value);
+    }
+}
+
+function findCategoryString(inputString) {
+    const regex = /(category=[\w+-]+)/;
+    const matches = inputString.match(regex);
+    if (!matches) {
+        return '';
+    }
+    const brandString = matches[1].replace('q:', '');
+    const brands = brandString.split('=')[1].split('+');
+    const validBrands = brands.filter((brand) =>
+        ['Everyday', 'Basketball'].includes(brand)
+    );
+    if (validBrands.length === 0) {
+        return '';
+    }
+
+    console.log(`category=${validBrands.join('+')}`);
+    return `category=${validBrands.join('+')}`;
+}
+
+function updateUrlWithCategoryString(checkbox) {
+    console.log("ENTER category");
+    let brandString = '';
+    if (url !== '') {
+        brandString = findCategoryString(url);
+    }
+
+    if (checkbox.checked) {
+        if (!brandString.includes('category=')) {
+            brandString += 'category=' + checkbox.value;
+        } else if (!brandString.includes(checkbox.value) && brandString.includes('category=')) {
+            console.log(brandString + " add");
+            brandString += '+' + checkbox.value;
+        }
+    } else {
+        brandString = brandString
+            .replace('+' + checkbox.value, '')
+            .replace(checkbox.value, '')
+            .replace('category=+', 'category=');
+        console.log(brandString + " return");
+    }
+    brandString = brandString.replace(/\/+/g, '/');
+
+    if (brandString === 'category=') {
+        brandString = '';
+    }
+
+    if (url === '') {
+        url += '/q:' + brandString;
+    } else if (!url.includes('category=') && brandString !== '') {
+        url += '&' + brandString;
+    } else if (url.includes('category=')) {
+        if (url.match(/category=[^&]*&?/gm) && brandString !== '') {
+            console.log('WORK1');
+            url = url.replace(/category=[^&]*&?/gm, brandString + '&');
+            if (url.match(/&$/))
+                url = url.replace(/&$/, '');
+        } else if (brandString === '') {
+            url = url
+                .replace(/&category=.+&/, '&')
+                .replace(/&category=.+/, '')
+                .replace(/q:category=.+&/, 'q:')
+                .replace(/q:category=.+/, '');
+        } else {
+            url = url.replace(/category=\w+/, brandString);
+        }
+    }
+
+    if (url === '/q:' || url === '/') {
+        url = '';
+    }
+
+    console.log(url);
+    localStorage.setItem('url', url);
+    return url;
+}
+
+categoryCheckboxes.forEach((checkbox) => {
+    const value = checkbox.value;
+    checkbox.checked = getCheckedCategoryValue(value);
+    checkbox.addEventListener('change', () => {
+        setCheckedCategoryValue(value, checkbox.checked);
+        if (updateUrlWithCategoryString(checkbox) === '') {
+            window.location.href = "/";
+            return;
+        }
+        window.location.href = updateUrlWithCategoryString(checkbox);
+    });
+});
+
+
+
+
 
 let sliderOne = document.getElementById("slider-1");
 let sliderTwo = document.getElementById("slider-2");

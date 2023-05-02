@@ -77,3 +77,10 @@
     outline: none;
     box-shadow: 0 0 10px #333333;
   }
+
+
+@media screen and (max-width: 850px) {
+  .container{
+    flex-direction: column;
+  }
+}

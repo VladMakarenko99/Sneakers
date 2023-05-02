@@ -17,6 +17,8 @@ public class Item
     public int BrandId { get; set; }
 
     public Brand? Brand { get; set; }
+
+    public string? BestFor { get; set; }
 }
 
 

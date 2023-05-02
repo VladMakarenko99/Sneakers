@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using practice.Data;
 using practice.Models;
-using System.Text.RegularExpressions;
 
 namespace practice.Controllers;
 
@@ -19,22 +17,21 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var list = await _context.Items.ToListAsync();
-        // var shuffledList = list.OrderBy(item => new Random().Next()).ToList();
-        // var totalCount = await _context.Items.CountAsync();
-        // ViewBag.totalPages = (int)Math.Ceiling(totalCount / 4.0);
-        // var list = await _context.Items.Skip(0).Take(4).ToListAsync();
-
+        ViewBag.totalPageCount = await _context.Items.CountAsync();
+        var list = await _context.Items.Take(12).ToListAsync();
         return View(list);
     }
 
-    [Route("/page={page}")]
+    [Route("/load={count}")]
     [HttpGet]
-    public async Task<IActionResult> Index(int page)
+    public async Task<IActionResult> Index(int count)
     {
-        var totalCount = await _context.Items.CountAsync();
-        //ViewBag.totalPages = (int)Math.Ceiling(totalCount / 4.0);
-        var list = await _context.Items.Skip((page - 1) * 4).Take(4).ToListAsync();
+        int totalcount = await _context.Items.CountAsync();
+        ViewBag.totalPageCount = totalcount;
+        if (count > totalcount)
+            return Redirect($"/load={totalcount}");
+
+        var list = await _context.Items.Take(count).ToListAsync();
         return View(list);
     }
 
@@ -53,13 +50,17 @@ public class HomeController : Controller
     }
 
 
-    [Route("/api/images/{imageName}.jpeg")]
+    [Route("/api/images/{imageName}")]
     [HttpGet]
     public IActionResult GetImage(string imageName)
     {
         imageName = imageName.Replace('-', ' ');
-        byte[] imageBytes = System.IO.File.ReadAllBytes($"wwwroot/img/{imageName}.jpeg");
+        byte[] imageBytes = System.IO.File.ReadAllBytes($"wwwroot/img/{imageName}");
         string contentType = "image/jpeg";
+        if (imageName.Contains("svg"))
+            contentType = "image/svg+xml";
+        else if (imageName.Contains("png"))
+            contentType = "image/png";
 
         return File(imageBytes, contentType);
     }

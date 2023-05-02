@@ -1,23 +1,45 @@
-<link rel="stylesheet" href="css/home.css" />
+<link rel="stylesheet" href="~/css/home.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
     integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="filters">
+    
+    <div class="filter">
+        <p>Search: </p>
+        <input type="text" id="search" class="search" placeholder="Search">
+            <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
+        </input>
+        <div class="press-enter">Press enter to confirm a search</div>
+    </div>
+
     <div class="filter">
         <p>Brand: </p>
         <div class="checkbox1">
-
-            <label> <input type="checkbox" class="checkbox" value="Nike" name="option" />Nike</label>
+            <label> <input type="checkbox" class="brand-checkbox" value="Nike" name="option" />Nike</label>
         </div>
 
         <div class="checkbox1">
-            <label> <input type="checkbox" class="checkbox" value="Adidas" name="option" />Adidas</label>
+            <label> <input type="checkbox" class="brand-checkbox" value="Adidas" name="option" />Adidas</label>
         </div>
 
         <div class="checkbox1">
-            <label> <input type="checkbox" class="checkbox" value="New-Balance" name="option" />New Balance</label>
+            <label> <input type="checkbox" class="brand-checkbox" value="New-Balance" name="option" />New Balance</label>
+        </div>
+    </div>
+
+    <div class="filter">
+        <p>Best for: </p>
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Everyday" name="option" />Everyday</label>
         </div>
 
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Basketball" name="option" />Basketball</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Running" name="option" />Running</label>
+        </div>
     </div>
 
     <div class="filter">
@@ -46,13 +68,6 @@
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
         </select>
-    </div>
-    <div class="filter">
-        <p>Search: </p>
-        <input type="text" id="search" class="search" placeholder="Search">
-            <img src="img/search.svg" id="search-icon" alt="">
-        </input>
-        <div class="press-enter">Press enter to confirm a search</div>
     </div>
 </div>
 

@@ -1,7 +1,7 @@
 @model practice.Models.Item
 @{
     ViewData["Title"] = Model?.Name;
-    string src = $"http://localhost:8000/api/images/{Model?.Image}.jpeg";
+    string src = $"http://localhost:8000/api/images/{Model?.Image}";
     src = src.Replace(" ", "-");
 }
 
@@ -37,6 +37,7 @@
                     <input type="hidden" asp-for="Image" value="@Model?.Image">
                     <input type="hidden" asp-for="BrandId" value="@Model?.BrandId">
                     <p class="product-description">@Model?.Description</p>
+                    <h3>Best for: @Model?.BestFor</h3>
                     <input type="submit" class="add-to-cart" value="To Cart">
                 </form>
             </div>

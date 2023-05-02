@@ -1,6 +1,7 @@
 @model List<Item>
 @{
     ViewData["Title"] = "Home page";
+    int count = Model.Count + 4;
 }
 <!doctype html>
 <html lang="en">
@@ -20,10 +21,11 @@
     </div>
     <div class="main-content">
         <div class="product-grid">
-            @foreach (var item in Model){
+            @foreach (var item in Model)
+            {
                 <div class="product">
                     @{
-                        string src = $"http://localhost:8000/api/images/{item.Image}.jpeg";
+                        string src = $"http://localhost:8000/api/images/{item.Image}";
                         src = src.Replace(' ', '-');
                         item.Name = item.Name?.Replace(' ', '-');
                     }
@@ -34,8 +36,21 @@
             }
 
         </div>
+        @if (Model.Count != ViewBag.totalPageCount)
+        {
+            <a id="load-more" href="/load=@count">Load more</a>
+        }
     </div>
-
+    <script>
+        const loadButton = document.getElementById("load-more");
+        if (loadButton !== null) {
+            loadButton.addEventListener('click', () => {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                localStorage.setItem('scrollPosition', scrollTop);
+                console.log(scrollTop);
+            });
+        }
+    </script>
 </body>
 
 </html>

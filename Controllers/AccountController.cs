@@ -220,7 +220,7 @@ public class AccountController : Controller
 
         await ResetCartData(userFound);
 
-        return Redirect("/");
+        return Redirect("/"); 
     }
 
 
@@ -228,9 +228,6 @@ public class AccountController : Controller
     {
         if (user.CartItemsJson == null)
         {
-            // HttpContext.Session.Remove("cartItems");
-            // HttpContext.Session.Remove("totalPrice");
-            // HttpContext.Session.SetInt32("LoginedUserProductCount", 0);
             var bytes = HttpContext.Session.Get("cartItems") ?? null;
             if (bytes != null)
             {
