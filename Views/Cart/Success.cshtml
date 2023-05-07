@@ -1,3 +1,4 @@
+@model List<Item>
 <head>
     <title>Success</title>
 </head>
@@ -7,6 +8,13 @@
             Your order is successfuly completed! Await our maneger contact you)
         </p>
     </div>
+</div>
+
+<div class="items">
+        @foreach (var item in Model)
+        {
+            <p>@item.Name</p>
+        }
 </div>
 
 <style>

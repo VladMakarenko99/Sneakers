@@ -22,16 +22,16 @@ public class HomeController : Controller
         return View(list);
     }
 
-    [Route("/load={count}")]
+    [Route("/load={load}")]
     [HttpGet]
-    public async Task<IActionResult> Index(int count)
+    public async Task<IActionResult> Index(int load)
     {
         int totalcount = await _context.Items.CountAsync();
         ViewBag.totalPageCount = totalcount;
-        if (count > totalcount)
+        if (load > totalcount)
             return Redirect($"/load={totalcount}");
 
-        var list = await _context.Items.Take(count).ToListAsync();
+        var list = await _context.Items.Take(load).ToListAsync();
         return View(list);
     }
 

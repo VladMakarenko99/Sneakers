@@ -29,6 +29,8 @@ public class FilterController : Controller
     {
         var filteredList = GetEntireList(url);
         ViewBag.totalPageCount = filteredList.Count();
+        if (load > filteredList.Count)
+            return Redirect($"/q:{url}/load={filteredList.Count}");
 
         return View(filteredList.Take(load).ToList());
     }
@@ -136,7 +138,7 @@ public class FilterController : Controller
             }
             if (filter.Contains("search="))
             {
-                string search = filter.Split("search=")[1].ToLower().Replace("-", " ");
+                string search = filter.Split("search=")[1].ToLower().Replace("+", " ");
                 filteredList = _context.Items.Where(x => x.Name!.ToLower().Contains(search)).ToList();
             }
         }

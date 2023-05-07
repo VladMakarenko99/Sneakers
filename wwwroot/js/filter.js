@@ -396,7 +396,7 @@ search.addEventListener("keyup", function (el) {
     }
     localStorage.setItem("searchValue", searchValue);
     const newUrl = "/q:search=" + searchValue;
-    history.pushState(null, null, newUrl.replace(/\s/g, '-'));
+    history.pushState(null, null, newUrl.replace(/\s/g, '+'));
 });
 
 search.addEventListener('keydown', (event) => {

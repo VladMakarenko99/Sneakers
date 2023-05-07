@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using practice.Data;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using practice.Auth;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +19,10 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(40);
+    options.IdleTimeout = TimeSpan.FromHours(1);
 });
+
+builder.Services.AddScoped<JWT>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
            .AddCookie(options =>
@@ -34,6 +38,25 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                options.ClientSecret = "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";
 
            });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(
+    options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "http://localhost:8000",
+        ValidAudience = "http://localhost:8000",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("G2JCIW9PkUOiN47WjTRl"))
+    };
+});
 
 WebApplication app = builder.Build();
 

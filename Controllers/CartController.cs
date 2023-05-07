@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using practice.Data;
 using practice.Models;
+using practice.Auth;
 using Stripe.Checkout;
 using Stripe;
 
@@ -11,10 +12,12 @@ namespace practice.Controllers
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly JWT _jwt;
 
-        public CartController(AppDbContext context)
+        public CartController(AppDbContext context, JWT jwt)
         {
             this._context = context;
+            this._jwt = jwt;
         }
 
         [Route("/cart")]
@@ -30,17 +33,20 @@ namespace practice.Controllers
         [HttpPost]
         public async Task<RedirectResult> AddToCart(Item item)
         {
-            if (HttpContext.Session.Get("userEmail") != null)
+            string? token = HttpContext.Session.GetString("JwtToken");
+            if (token != null)
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
-                if (user!.CartItemsJson != null && user.CartItemsJson != "")
+                var currentUser = _jwt.GetCurrentUser(token);
+                currentUser = _context.Users.FirstOrDefault(x => x.Email == currentUser!.Email);
+                if (!string.IsNullOrEmpty(currentUser!.CartItemsJson))
                 {
                     int count = HttpContext.Session.GetInt32("LoginedUserProductCount") ?? 0;
                     HttpContext.Session.SetInt32("LoginedUserProductCount", count + 1);
-                    var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
+                    var CartList = JsonSerializer.Deserialize<List<Item>>(currentUser.CartItemsJson);
                     CartList!.Add(item);
-                    user.CartItemsJson = JsonSerializer.Serialize(CartList);
+                    currentUser.CartItemsJson = JsonSerializer.Serialize(CartList);
                     await _context.SaveChangesAsync();
+                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(currentUser));
                 }
                 else
                 {
@@ -48,8 +54,9 @@ namespace practice.Controllers
                     HttpContext.Session.SetInt32("LoginedUserProductCount", count + 1);
                     var CartList = new List<Item>();
                     CartList.Add(item);
-                    user!.CartItemsJson = JsonSerializer.Serialize(CartList);
+                    currentUser!.CartItemsJson = JsonSerializer.Serialize(CartList);
                     await _context.SaveChangesAsync();
+                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(currentUser));
                 }
             }
             else
@@ -60,7 +67,7 @@ namespace practice.Controllers
             var list = GetSessionList("cartItems");
 
             list.Add(item);
-            HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(list)));
+            HttpContext.Session.SetString("cartItems", JsonSerializer.Serialize(list));
 
             int totalPrice = HttpContext.Session.GetInt32("totalPrice") ?? 0;
             totalPrice += item.Price;
@@ -71,22 +78,24 @@ namespace practice.Controllers
         [Route("/DeleteItem/{id}")]
         public async Task<RedirectResult> DeleteItem(int id)
         {
-            if (HttpContext.Session.Get("userEmail") != null)
+            string? token = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(token))
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
+                var user = _context.Users.FirstOrDefault(x => x.Email == _jwt.GetCurrentUser(token)!.Email);
                 if (user!.CartItemsJson != null && user.CartItemsJson != "")
                 {
                     var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
                     CartList!.Remove(CartList.Find(x => x.Id == id)!);
                     user.CartItemsJson = JsonSerializer.Serialize(CartList);
                     await _context.SaveChangesAsync();
+                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
                 }
             }
             var list = GetSessionList("cartItems");
 
             Item item = list.Find(x => x.Id == id) ?? new Item();
             list.Remove(item);
-            HttpContext.Session.Set("cartItems", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(list)));
+            HttpContext.Session.SetString("cartItems", JsonSerializer.Serialize(list));
 
             int totalPrice = HttpContext.Session.GetInt32("totalPrice") ?? 0;
             totalPrice -= item.Price;
@@ -102,11 +111,13 @@ namespace practice.Controllers
         }
         public async Task<RedirectResult> Clear()
         {
-            if (HttpContext.Session.Get("userEmail") != null)
+            string? token = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(token))
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == HttpContext.Session.GetString("userEmail"));
+                var user = _context.Users.FirstOrDefault(x => x.Email == _jwt.GetCurrentUser(token)!.Email);
                 user!.CartItemsJson = null;
                 await _context.SaveChangesAsync();
+                HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
             }
             HttpContext.Session.Remove("cartItems");
             HttpContext.Session.Remove("totalPrice");
@@ -119,14 +130,18 @@ namespace practice.Controllers
         [Route("/checkout")]
         public IActionResult Checkout()
         {
-            var bytes = HttpContext.Session.Get("cartItems");
-            if (bytes == null)
+            var json = HttpContext.Session.GetString("cartItems");
+            if (string.IsNullOrEmpty(json))
             {
                 return NotFound();
             }
-            ViewBag.userEmail = HttpContext.Session.GetString("userEmail");
-            ViewBag.userFirstName = HttpContext.Session.GetString("userFirstName");
-            ViewBag.userLastName = HttpContext.Session.GetString("userLastName");
+            var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken"));
+            if (currentUser != null)
+            {
+                ViewBag.userEmail = currentUser.Email;
+                ViewBag.userFirstName = currentUser.FirstName;
+                ViewBag.userLastName = currentUser.LastName;
+            }
             ViewBag.totalPrice = HttpContext.Session.GetInt32("totalPrice");
 
             return View();
@@ -135,7 +150,6 @@ namespace practice.Controllers
         [HttpPost]
         public async Task<IActionResult> Pay(Order order)
         {
-            //string url = "/";
             string order_desc = "";
             var checkoutOrder = new Order
             {
@@ -145,14 +159,14 @@ namespace practice.Controllers
                 Email = order.Email,
                 Town = order.Town,
                 Address = order.Address,
-                ItemsJson = GetSessionListJson("cartItems"),
+                ItemsJson = HttpContext.Session.GetString("cartItems"),
                 TotalPrice = order.TotalPrice
             };
             foreach (var item in GetSessionList("cartItems"))
                 order_desc += item.Name + ", ";
 
             _context.Orders.Add(checkoutOrder);
-            await _context.SaveChangesAsync();    
+            await _context.SaveChangesAsync();
 
             StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
 
@@ -182,21 +196,31 @@ namespace practice.Controllers
             var intent = service.Create(options);
 
             Response.Headers.Add("Location", intent.Url);
-            
+
             return Redirect(intent.Url);
         }
 
         [Route("/checkout/success/{id}")]
         public async Task<IActionResult> Success(string id)
         {
+            var order = new Order();
+            try
+            {
+                order = _context.Orders.FirstOrDefault(x => x.Id == new Guid(id));
+                if (order == null)
+                    return NotFound();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
             await Clear();
-            return View();
+            return View(JsonSerializer.Deserialize<List<Item>>(order.ItemsJson!));
         }
 
         public List<Item> GetSessionList(string sessionKey)
         {
-            var bytes = HttpContext.Session.Get(sessionKey) ?? Array.Empty<byte>();
-            string json = Encoding.UTF8.GetString(bytes);
+            var json = HttpContext.Session.GetString(sessionKey);
             var list = new List<Item>();
 
             if (!string.IsNullOrEmpty(json))
@@ -204,13 +228,6 @@ namespace practice.Controllers
                 list = JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
             }
             return list;
-        }
-
-        public string GetSessionListJson(string sessionKey){
-            var bytes = HttpContext.Session.Get(sessionKey) ?? Array.Empty<byte>();
-            string json = Encoding.UTF8.GetString(bytes);
-
-            return json;
         }
     }
 }

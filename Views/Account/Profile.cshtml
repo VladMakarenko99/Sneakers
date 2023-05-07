@@ -3,10 +3,14 @@
 @{
     ViewData["Title"] = "Profile";
 }
+@model User;
 
 <h1>@ViewData["Title"]</h1>
 
 <div style="margin-top: 10%;">
+    <h2>Hello, @Model.FirstName @Model.LastName</h2>
+    <h3>Manage email: @Model.Email</h3>
+    <p>@Model.CartItemsJson</p>
     <button data-modal-target="#modal">Delete Account</button>
 </div>
 
