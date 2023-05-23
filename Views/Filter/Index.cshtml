@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<body>
+<div class="main">
     <div class="sidenav">
         <partial name="_filters" />
     </div>
@@ -41,11 +41,13 @@
             </div>
             @if (Model.Count != ViewBag.totalPageCount)
             {
+                System.Console.WriteLine(Model.Count);
+                System.Console.WriteLine(ViewBag.totalPageCount);
                 <a id="load-more" href="">Load more</a>
             }
         }
     </div>
-</body>
+</div>
 <script>
     const loadButton = document.getElementById("load-more");
     if(loadButton !== null){

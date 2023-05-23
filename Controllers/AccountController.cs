@@ -12,19 +12,21 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.Json;
 using System.Text;
 using practice.Auth;
+using practice.Repository;
 
 namespace practice.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly UserRepository _repository;
+
     private readonly JWT _jwt;
 
 
-    public AccountController(AppDbContext context, IConfiguration confiuration, JWT jwt)
+    public AccountController(UserRepository _repository, JWT jwt)
     {
-        this._context = context;
         this._jwt = jwt;
+        this._repository = _repository;
     }
 
 
@@ -60,7 +62,7 @@ public class AccountController : Controller
         if (!string.IsNullOrEmpty(user.Email) && !Regex.IsMatch(user.Email, @"\w+@\w+\.\w+"))
             ModelState.AddModelError(nameof(user.Email), "The email format is incorrect!");
 
-        if (!string.IsNullOrEmpty(user.Email) && _context.Users.FirstOrDefault(x => x.Email == user.Email) != null)
+        if (!string.IsNullOrEmpty(user.Email) && await _repository.GetByEmailAsync(user.Email) != null)
             ModelState.AddModelError(nameof(user.Email), "This email is already registered!");
 
         if (!string.IsNullOrEmpty(user.FirstName) && Convert.ToString(user.FirstName).Length > 20)
@@ -82,8 +84,7 @@ public class AccountController : Controller
 
         var salt = DateTime.Now.ToString(CultureInfo.CurrentCulture);
         user = new User(user.FirstName!, user.LastName!, user.Email!, Hashing.HashPassword($"{user.Password!}{salt}"), Hashing.HashPassword($"{user.ConfirmedPass!}{salt}"), salt);
-        await _context.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await _repository.AddAsync(user);
 
         HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
 
@@ -111,14 +112,13 @@ public class AccountController : Controller
         if (!ModelState.IsValid) return View("Login", model);
 
 
-        var userFound = _context.Users.FirstOrDefault(x => x.Email == model.Email);
+        var userFound = await _repository.GetByEmailAsync(model.Email!);
 
         if (Hashing.HashPassword($"{model.Password}{userFound?.Salt}") == userFound?.Password)
         {
 
             HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userFound));
 
-            ;
 
             var client = new SmtpClient("smtp.mailtrap.io", 2525)
             {
@@ -161,17 +161,15 @@ public class AccountController : Controller
         return View(currentUser);
     }
 
+    [Route("/account/delete")]
     public async Task<IActionResult> DeleteAccount()
     {
-        string? email = HttpContext.Session.GetString("userEmail");
-        if (string.IsNullOrEmpty(email))
+        string? token = HttpContext.Session.GetString("JwtToken");
+        if (string.IsNullOrEmpty(token))
             return NotFound();
-        var userFound = _context.Users.FirstOrDefault(x => x.Email == email) ?? new User();
-        _context.Users.Remove(userFound);
-        await _context.SaveChangesAsync();
-        HttpContext.Session.Remove("userFirstName");
-        HttpContext.Session.Remove("userLastName");
-        HttpContext.Session.Remove("userEmail");
+        var currentUser = _jwt.GetCurrentUser(token);
+        await _repository.Remove(await _repository.GetByEmailAsync(currentUser!.Email!) ?? new User());
+        HttpContext.Session.Remove("JwtToken");
         return Redirect("/");
     }
 
@@ -198,7 +196,7 @@ public class AccountController : Controller
         }
 
         var email = result.Principal.FindFirstValue(ClaimTypes.Email);
-        var userFound = _context.Users.FirstOrDefault(x => x.Email == email);
+        var userFound = await _repository.GetByEmailAsync(email!);
 
         if (userFound == null)
         {
@@ -210,8 +208,7 @@ public class AccountController : Controller
                 Hashing.HashPassword($"{result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)}{DateTime.Now}"),
                 DateTime.Now.ToString(CultureInfo.CurrentCulture)
                 );
-            await _context.AddAsync(user);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(user);
             userFound = user;
         }
         HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userFound));
@@ -231,8 +228,7 @@ public class AccountController : Controller
             {
                 string json = Encoding.UTF8.GetString(bytes);
                 user.CartItemsJson = json;
-                _context.Update(user);
-                await _context.SaveChangesAsync();
+                await _repository.Update(user);
                 HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
             }
         }
@@ -257,8 +253,7 @@ public class AccountController : Controller
             HttpContext.Session.SetInt32("totalPrice", totalPrice);
 
             user.CartItemsJson = JsonSerializer.Serialize(list1);
-            _context.Update(user);
-            await _context.SaveChangesAsync();
+            await _repository.Update(user);
             HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
 
         }

@@ -26,6 +26,8 @@ window.onload = function () {
     loadSliderValues();
     loadSortValue();
     loadSearchValue();
+    if(localStorage.getItem("shownFilter"))
+        document.querySelector(".filter-to-show").classList.toggle("show");
 }
 
 const brandCheckboxes = document.querySelectorAll('.brand-checkbox');
@@ -155,7 +157,7 @@ function findCategoryString(inputString) {
     const brandString = matches[1].replace('q:', '');
     const brands = brandString.split('=')[1].split('+');
     const validBrands = brands.filter((brand) =>
-        ['Everyday', 'Basketball'].includes(brand)
+        ['Everyday', 'Basketball', 'Running', 'Skating', 'Football', 'Handball'].includes(brand)
     );
     if (validBrands.length === 0) {
         return '';

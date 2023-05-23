@@ -3,23 +3,14 @@
     ViewData["Title"] = "Home page";
     int count = Model.Count + 4;
 }
-<!doctype html>
-<html lang="en">
+<title>@ViewData["Title"]</title>
+<link rel="stylesheet" href="css/home.css" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="css/home.css" />
-</head>
-
-<body>
+<div class="main">
     <div class="sidenav">
         <partial name="_filters" />
     </div>
-    <div class="main-content">
+    <section class="main-content">
         <div class="product-grid">
             @foreach (var item in Model)
             {
@@ -40,17 +31,16 @@
         {
             <a id="load-more" href="/load=@count">Load more</a>
         }
-    </div>
-    <script>
-        const loadButton = document.getElementById("load-more");
-        if (loadButton !== null) {
-            loadButton.addEventListener('click', () => {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                localStorage.setItem('scrollPosition', scrollTop);
-                console.log(scrollTop);
-            });
-        }
-    </script>
-</body>
+    </section>
+</div>
 
-</html>
+<script>
+    const loadButton = document.getElementById("load-more");
+    if (loadButton !== null) {
+        loadButton.addEventListener('click', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            localStorage.setItem('scrollPosition', scrollTop);
+            console.log(scrollTop);
+        });
+    }
+</script>

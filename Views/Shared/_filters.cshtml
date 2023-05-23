@@ -3,11 +3,11 @@
     integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="filters">
-    
+
     <div class="filter">
         <p>Search: </p>
         <input type="text" id="search" class="search" placeholder="Search">
-            <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
+        <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
         </input>
         <div class="press-enter">Press enter to confirm a search</div>
     </div>
@@ -23,7 +23,8 @@
         </div>
 
         <div class="checkbox1">
-            <label> <input type="checkbox" class="brand-checkbox" value="New-Balance" name="option" />New Balance</label>
+            <label> <input type="checkbox" class="brand-checkbox" value="New-Balance" name="option" />New
+                Balance</label>
         </div>
     </div>
 
@@ -34,11 +35,24 @@
         </div>
 
         <div class="checkbox1">
-            <label> <input type="checkbox" class="category-checkbox" value="Basketball" name="option" />Basketball</label>
+            <label> <input type="checkbox" class="category-checkbox" value="Basketball"
+                    name="option" />Basketball</label>
         </div>
 
         <div class="checkbox1">
             <label> <input type="checkbox" class="category-checkbox" value="Running" name="option" />Running</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Football" name="option" />Football</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Handball" name="option" />Handball</label>
+        </div>
+
+        <div class="checkbox1">
+            <label> <input type="checkbox" class="category-checkbox" value="Skating" name="option" />Skating</label>
         </div>
     </div>
 
@@ -70,6 +84,18 @@
         </select>
     </div>
 </div>
+<script>
+    const showFiltersBtn = document.getElementById("show-filters-btn");
+    const filterDiv = document.querySelector(".filter-to-show");
 
+    showFiltersBtn.addEventListener("click", () => {
+        filterDiv.classList.toggle("show");
+        localStorage.setItem('shownFilter', true)
+        if (!filterDiv.classList.contains("show"))
+            localStorage.removeItem('shownFilter');
+    });
+
+
+</script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/filter.js"></script>

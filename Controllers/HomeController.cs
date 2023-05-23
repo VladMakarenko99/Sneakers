@@ -1,37 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using practice.Data;
 using practice.Models;
+using practice.Repository;
 
 namespace practice.Controllers;
 
 public class HomeController : Controller
 {
-
-    private readonly AppDbContext _context;
-
-    public HomeController(AppDbContext context) => this._context = context;
+    private readonly ItemRepository _repository;
+    public HomeController(ItemRepository repository) => this._repository = repository;
 
     [Route("/")]
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        ViewBag.totalPageCount = await _context.Items.CountAsync();
-        var list = await _context.Items.Take(12).ToListAsync();
-        return View(list);
+        try
+        {
+            ViewBag.totalPageCount = await _repository.CountAsync();
+            var list = await _repository.GetFewAsync(12);
+            return View(list);
+        }
+        catch(Exception)
+        {
+            return Redirect("/Error");
+        }
     }
 
     [Route("/load={load}")]
     [HttpGet]
     public async Task<IActionResult> Index(int load)
     {
-        int totalcount = await _context.Items.CountAsync();
+        int totalcount = await _repository.CountAsync();
         ViewBag.totalPageCount = totalcount;
         if (load > totalcount)
             return Redirect($"/load={totalcount}");
 
-        var list = await _context.Items.Take(load).ToListAsync();
+        var list = await _repository.GetFewAsync(load);
         return View(list);
     }
 
@@ -40,7 +44,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Item(string name)
     {
         name = name.Replace('-', ' ');
-        Item? item = await _context.Items.FirstOrDefaultAsync(i => i.Name == name);
+        Item? item = await _repository.GetByNameAsync(name);
 
         ViewBag.sizes = new SelectList(new int[]{
             40, 41, 42, 43, 44, 45, 46, 47

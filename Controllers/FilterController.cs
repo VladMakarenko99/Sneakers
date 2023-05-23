@@ -1,41 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
 using practice.Data;
 using practice.Models;
-using System.Text.RegularExpressions;
+using practice.Repository;
 
 namespace practice.Controllers;
 
 public class FilterController : Controller
 {
 
-    private readonly AppDbContext _context;
+    private readonly ItemRepository _repository;
 
-    public FilterController(AppDbContext context) => this._context = context;
-
-
+    public FilterController(ItemRepository repository) => this._repository = repository;
 
 
     [Route("/q:{url}")]
-    public IActionResult Index(string url)
+    public async Task<IActionResult> IndexAsync(string url)
     {
-        var filteredList = GetEntireList(url);
-        ViewBag.totalPageCount = filteredList.Count();
+        var filteredList = await GetEntireList(url);
+        ViewBag.totalPageCount = filteredList.Count;
 
         return View(filteredList.Take(8).ToList());
     }
 
     [Route("/q:{url}/load={load}")]
-    public IActionResult Index(string url, int load)
+    public async Task<IActionResult> Index(string url, int load)
     {
-        var filteredList = GetEntireList(url);
-        ViewBag.totalPageCount = filteredList.Count();
+        var filteredList = await GetEntireList(url);
+        ViewBag.totalPageCount = filteredList.Count;
         if (load > filteredList.Count)
             return Redirect($"/q:{url}/load={filteredList.Count}");
 
         return View(filteredList.Take(load).ToList());
     }
 
-    public static int[] GetMinAndMaxPrice(string filter)
+    private static int[] GetMinAndMaxPrice(string filter)
     {
         var price = filter.Split("price=")[1];
         var prices = price.Split("-").ToList();
@@ -44,7 +42,7 @@ public class FilterController : Controller
         return new int[] { min, max };
     }
 
-    public List<Item> GetFilteredListByBrand(List<Item> listToFilter, string filter)
+    private async Task<List<Item>> GetFilteredListByBrandAsync(List<Item> listToFilter, string filter)
     {
         var brandList = new List<string>();
         var brandString = filter.Split("brand=")[1];
@@ -56,7 +54,7 @@ public class FilterController : Controller
         var items = new List<Item>();
         foreach (var item in brandList)
         {
-            var brand = _context.Brands.FirstOrDefault(x => x.Name == item.Replace("-", " "));
+            var brand = await _repository.GetBrandByNameAsync(item);
 
             if (brand != null)
             {
@@ -69,7 +67,7 @@ public class FilterController : Controller
         return items;
     }
 
-    public List<Item> GetFilteredListByCategory(List<Item> listToFilter, string filter)
+    private List<Item> GetFilteredListByCategory(List<Item> listToFilter, string filter)
     {
         var list = new List<string>();
         var filterString = filter.Split("category=")[1];
@@ -87,21 +85,22 @@ public class FilterController : Controller
     }
 
 
-    public List<Item> GetEntireList(string url)
+    private async Task<List<Item>> GetEntireList(string url)
     {
         var filteredList = new List<Item>();
         var filterStrings = url.Split("&").ToList();
+        var entireList = _repository.GetAll();
 
         foreach (string filter in filterStrings)
         {
             if (filter.Contains("brand=") && filteredList.Count == 0 && filterStrings.IndexOf(filter) == 0)
-                filteredList = GetFilteredListByBrand(_context.Items.ToList(), filter);
+                filteredList = await GetFilteredListByBrandAsync(entireList, filter);
 
             if (filter.Contains("brand=") && filteredList.Count > 0)
-                filteredList = GetFilteredListByBrand(filteredList, filter);
+                filteredList = await GetFilteredListByBrandAsync(filteredList, filter);
 
             if (filter.Contains("category=") && filteredList.Count == 0 && filterStrings.IndexOf(filter) == 0)
-                filteredList = GetFilteredListByCategory(_context.Items.ToList(), filter);
+                filteredList = GetFilteredListByCategory(entireList, filter);
 
             if (filter.Contains("category=") && filteredList.Count > 0)
                 filteredList = GetFilteredListByCategory(filteredList, filter);
@@ -117,7 +116,7 @@ public class FilterController : Controller
             {
                 var min = GetMinAndMaxPrice(filter)[0];
                 var max = GetMinAndMaxPrice(filter)[1];
-                filteredList = _context.Items.Where(x => x.Price >= min && x.Price <= max).ToList();
+                filteredList = entireList.Where(x => x.Price >= min && x.Price <= max).ToList();
             }
 
             if (filter.Contains("sort=") && filteredList.Count > 0)
@@ -132,14 +131,14 @@ public class FilterController : Controller
             {
                 var sort = filter.Split("sort=")[1];
                 if (sort == "ascending")
-                    filteredList = _context.Items.OrderBy(x => x.Price).ToList();
+                    filteredList = entireList.OrderBy(x => x.Price).ToList();
                 if (sort == "descending")
-                    filteredList = _context.Items.OrderByDescending(x => x.Price).ToList();
+                    filteredList = entireList.OrderByDescending(x => x.Price).ToList();
             }
             if (filter.Contains("search="))
             {
                 string search = filter.Split("search=")[1].ToLower().Replace("+", " ");
-                filteredList = _context.Items.Where(x => x.Name!.ToLower().Contains(search)).ToList();
+                filteredList = entireList.Where(x => x.Name!.ToLower().Contains(search)).ToList();
             }
         }
         return filteredList.Distinct().ToList();
