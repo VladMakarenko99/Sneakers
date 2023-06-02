@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Manage";
+}
+@model User;
+
+<title>@ViewData["title"]</title>
+<link rel="stylesheet" href="~/css/manage.css">
+
+<div class="main-content">
+    <form asp-action="Manage" asp-controller="Account" method="post">
+        <h1 class="label">@ViewData["Title"]</h1>
+        <div class="form-group -login">
+            <label class="control-label">First Name </label>
+            <input type="text" value="@Model.FirstName" class="input" asp-for="FirstName">
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group -login">
+            <label class="control-label">Last Name </label>
+            <input type="text" value="@Model.LastName" class="input" asp-for="LastName">
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+
+        @* <div class="form-group -login">
+        <label class="control-label">Email </label>
+        <input type="text" value="@Model.Email" class="input" asp-for="Email">
+        <span asp-validation-for="Email" class="text-danger"></span>
+        </div> *@
+        <input type="hidden" asp-for="Email" value="@Model.Email">
+        <input type="submit" class="button" value="Submit Changes">
+
+    </form>
+</div>

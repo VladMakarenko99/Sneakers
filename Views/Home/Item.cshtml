@@ -23,8 +23,11 @@
             <img src="@src" />
         </div>
         <div class="product-info">
-              <h2 class="product-name">@Model?.Name</h2>
-              <p class="product-price">$@Model?.Price</p>
+            <h2 class="product-name">@Model?.Name</h2>
+            <div class="price-bestfor">
+                <p class="product-price">$@Model?.Price</p>
+                <p class="bestfor">Best for: @Model?.BestFor</p>
+            </div>
             <div class="product-size">
                 <label for="size">Choose size:</label>
                 <form method="post" asp-controller="Cart" asp-action="AddToCart">
@@ -37,11 +40,11 @@
                     <input type="hidden" asp-for="Image" value="@Model?.Image">
                     <input type="hidden" asp-for="BrandId" value="@Model?.BrandId">
                     <p class="product-description">@Model?.Description</p>
-                    <h3>Best for: @Model?.BestFor</h3>
                     <input type="submit" class="add-to-cart" value="To Cart">
                 </form>
             </div>
         </div>
     </div>
 </body>
+
 </html>

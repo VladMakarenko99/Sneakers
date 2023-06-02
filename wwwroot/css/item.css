@@ -27,8 +27,9 @@
   }
   
   .product-price {
-    font-size: 24px;
+    font-size: 25px;
     margin-bottom: 20px;
+    font-weight: 600;
   }
   
   .product-size {
@@ -83,4 +84,17 @@
   .container{
     flex-direction: column;
   }
+}
+
+.price-bestfor{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.bestfor{
+  font-weight: 400;
+  font-size: 19px;
 }

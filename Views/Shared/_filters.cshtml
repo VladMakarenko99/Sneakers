@@ -7,7 +7,9 @@
     <div class="filter">
         <p>Search: </p>
         <input type="text" id="search" class="search" placeholder="Search">
-        <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
+        <a href="">
+            <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
+            </a>
         </input>
         <div class="press-enter">Press enter to confirm a search</div>
     </div>
@@ -84,18 +86,4 @@
         </select>
     </div>
 </div>
-<script>
-    const showFiltersBtn = document.getElementById("show-filters-btn");
-    const filterDiv = document.querySelector(".filter-to-show");
-
-    showFiltersBtn.addEventListener("click", () => {
-        filterDiv.classList.toggle("show");
-        localStorage.setItem('shownFilter', true)
-        if (!filterDiv.classList.contains("show"))
-            localStorage.removeItem('shownFilter');
-    });
-
-
-</script>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/js/filter.js"></script>
+<script type="module" src="~/js/filter.js"></script>

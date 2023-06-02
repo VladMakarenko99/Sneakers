@@ -10,6 +10,8 @@ public class JWT
 {
     public string GenerateJwtToken(User user)
     {
+        if(user == null)
+            return "";
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes("G2JCIW9PkUOiN47WjTRl");
 

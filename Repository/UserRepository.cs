@@ -38,4 +38,20 @@ public class UserRepository : IUserRepository
         _context.Update(user);
         await _context.SaveChangesAsync();
     }
+
+    public async Task UploadPhotoAsync(User user, IFormFile file)
+    {
+        if (file != null && file.Length > 0)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                user = await GetByEmailAsync(user.Email!) ?? new User();
+                user.ProfilePhoto = memoryStream.ToArray();
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+    }
 }

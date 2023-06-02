@@ -151,12 +151,15 @@ public class AccountController : Controller
 
     [Route("/profile")]
     [HttpGet]
-    public IActionResult Profile()
+    public async Task<IActionResult> Profile()
     {
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
             return NotFound();
 
         var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
+        currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
+        if (currentUser == null)
+            return NotFound();
 
         return View(currentUser);
     }
@@ -196,6 +199,7 @@ public class AccountController : Controller
         }
 
         var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+        System.Console.WriteLine(email);
         var userFound = await _repository.GetByEmailAsync(email!);
 
         if (userFound == null)
@@ -219,7 +223,7 @@ public class AccountController : Controller
         return Redirect("/");
     }
 
-    public async Task ResetCartData(User user)
+    private async Task ResetCartData(User user)
     {
         if (user.CartItemsJson == null)
         {
@@ -255,7 +259,50 @@ public class AccountController : Controller
             user.CartItemsJson = JsonSerializer.Serialize(list1);
             await _repository.Update(user);
             HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
-
         }
+    }
+
+    public async Task<IActionResult> UploadPhoto(User user, IFormFile file)
+    {
+        await _repository.UploadPhotoAsync(user, file);
+        return Redirect("/profile");
+    }
+
+    [Route("/account/manage")]
+    [HttpGet]
+    public async Task<IActionResult> Manage()
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
+            return NotFound();
+
+        var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
+        currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
+        if (currentUser == null)
+            return NotFound();
+
+        return View(currentUser);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Manage(User user)
+    {
+        if (string.IsNullOrEmpty(user.FirstName))
+            ModelState.AddModelError(nameof(user.FirstName), "This field is required!");
+            
+        if (string.IsNullOrEmpty(user.LastName))
+            ModelState.AddModelError(nameof(user.LastName), "This field is required!");
+
+        if (!ModelState.IsValid) return View("Manage", user);
+
+        var userToUpdate = await _repository.GetByEmailAsync(user.Email!) ?? new User();
+
+        userToUpdate.FirstName = user.FirstName;
+        userToUpdate.LastName = user.LastName;
+        userToUpdate.Email = user.Email;
+
+        await _repository.Update(userToUpdate);
+        HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userToUpdate));
+
+        return Redirect("/profile");
     }
 }

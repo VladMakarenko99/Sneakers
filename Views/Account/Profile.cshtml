@@ -5,13 +5,43 @@
 }
 @model User;
 
-<h1>@ViewData["Title"]</h1>
-
-<div style="margin-top: 10%;">
-    <h2>Hello, @Model.FirstName @Model.LastName</h2>
-    <h3>Manage email: @Model.Email</h3>
-    <p>@Model.CartItemsJson</p>
-    <button data-modal-target="#modal">Delete Account</button>
+<div class="main-content">
+    <div class="left">
+        @if (Model.ProfilePhoto != null && Model.ProfilePhoto.Length > 0)
+        {
+            <img class="photo" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePhoto)"
+                alt="Profile Photo" />
+        }
+        else
+        {
+            <img class="photo"
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png" />
+        }
+        <form asp-action="UploadPhoto" asp-controller="Account" method="post" enctype="multipart/form-data">
+            <label for="file-input"> <img src="http://localhost:8000/api/images/upload.svg"> Upload photo</label>
+            <input type="file" id="file-input" name="file" accept=".png, .jpeg, .jpg .gif" required>
+            <span asp-validation-for="ProfilePhoto" class="text-danger"></span>
+            <input type="hidden" value="@Model.Email" name="user.Email">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="right">
+        <div class="info">
+            <div class="field">
+                <p>Firstname: <span class="text">@Model.FirstName</span></p>
+            </div>
+            <div class="field">
+                <p>Lastname: <span class="text">@Model.LastName</span></p>
+            </div>
+            <div class="field">
+                <p>Email: <span class="text">@Model.Email</span></p>
+            </div>
+        </div>
+        <div class="buttons">
+            <button data-modal-target="#modal" class="button delete">Delete Account</button>
+            <a class="button manage" href="/account/manage">Manage personal data</a>
+        </div>
+    </div>
 </div>
 
 
@@ -30,4 +60,3 @@
         <a href="/account/delete" class="modal-button delete">Delete</a>
     </div>
 </div>
-

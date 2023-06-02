@@ -2,12 +2,15 @@
 @using System.Text.Json;
 @model Order;
 <link rel="stylesheet" type="text/css" href="css/checkout.css">
-
+@{
+	ViewData["title"] = "Checkout";
+}
+<title>@ViewData["title"]</title>
 
 <div class="container">
 
 	<div class="left">
-		<h2>Checkout</h2>
+		<h2>@ViewData["title"]</h2>
 		<form asp-controller="Cart" asp-action="Pay" method="post">
 			@if (ViewBag.userEmail == null && ViewBag.userFirstName == null && ViewBag.userLastName == null)
 			{

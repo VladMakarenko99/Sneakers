@@ -107,3 +107,163 @@
   text-align: center;
   cursor: pointer;
 }
+
+.main-content {
+  margin-top: 10%;
+  display: flex;
+  flex-direction: row;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+.left {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo {
+  border-radius: 50%;
+  border: 1px solid black;
+  width: 350px;
+  height: 350px;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  margin-top: 25px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label img {
+  margin-right: 7px;
+  height: 21px;
+}
+
+label {
+  display: block;
+  /* background-color: #415ff4; */
+  background-color: #376581;
+  padding: 9px 15px;
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 18px;
+  color: white;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+input[type="submit"] {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #376581;
+  background-color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 15px;
+  cursor: pointer;
+  border: 2.5px solid #376581;
+
+}
+
+input[type="submit"]:hover {
+  background-color: #376581;
+  color: white;
+}
+
+label:hover {
+  cursor: pointer;
+}
+
+.right {
+  width: 50%;
+  height: 100%;
+  margin-top: 100px;
+
+}
+
+p {
+  font-size: 19px;
+  font-weight: 400;
+}
+
+.text {
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.field {
+  margin: 15px;
+}
+
+.info {
+  border: 1px solid black;
+}
+
+.buttons {
+  margin-top: 170px;
+  display: flex;
+  justify-content: space-between;
+  /* align-items: start; */
+}
+
+.button {
+  display: block;
+  padding: 9px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  width: auto;
+  color: white;
+
+}
+
+.button.manage {
+  background-color: #376581;
+  transition: 0.3s;
+}
+
+.button.manage:hover{
+  background-color: #194764;
+}
+
+.button.delete {
+  background-color: rgb(249, 55, 52);
+}
+
+.button.delete:hover {
+  background-color: rgb(244, 75, 72);
+}
+
+@media screen and (max-width: 1000px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .left {
+    margin: auto;
+    margin-bottom: 5%;
+  }
+
+  .right {
+    margin: auto;
+  }
+  .buttons{
+    margin-top: 40px;
+  }
+}

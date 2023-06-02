@@ -18,7 +18,9 @@ namespace practice.Models
         
         public string? Salt { get; set; }
 
-		public string? CartItemsJson { get; set; } 		
+		public string? CartItemsJson { get; set; } 
+
+		public byte[]? ProfilePhoto { get; set; }		
         public User()
 		{
 		}
