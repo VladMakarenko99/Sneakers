@@ -1,11 +1,12 @@
 @model List<Item>
 @{
     ViewData["Title"] = "Home page";
-    int count = Model.Count + 4;
 }
 <title>@ViewData["Title"]</title>
 <link rel="stylesheet" href="css/home.css" />
-
+@if (Model != null)
+{
+    int count = Model.Count + 4;
 <div class="main">
     <div class="sidenav">
         <partial name="_filters" />
@@ -13,28 +14,66 @@
     <section class="main-content">
         <div class="product-grid">
             @foreach (var item in Model)
-            {
-                <div class="product">
-                    @{
-                        string src = $"http://localhost:8000/api/images/{item.Image}";
-                        src = src.Replace(' ', '-');
-                        item.Name = item.Name?.Replace(' ', '-');
-                    }
-                    <a href="/@item.Name"><img src="@src" alt="img" /></a>
-                    <h3>@item.Name?.Replace('-', ' ')</h3>
-                    <p>@item.Price $</p>
-                </div>
-            }
+                {
+                    <div class="product">
+                        @{
+                            string src = $"http://localhost:8000/api/images/{item.Image}";
+                            src = src.Replace(' ', '-');
+                            item.Name = item.Name?.Replace(' ', '-');
+                        }
+                        <a href="/@item.Name"><img src="@src" alt="img" /></a>
+                        <h3>@item.Name?.Replace('-', ' ')</h3>
+                        <p>@item.Price $</p>
+                    </div>
+                }
 
         </div>
-        @if (Model.Count != ViewBag.totalPageCount)
-        {
-            <a id="load-more" href="/load=@count">Load more</a>
-        }
+            @if (Model.Count != ViewBag.totalPageCount)
+            {
+                <a id="load-more" href="/load=@count">Load more</a>
+            }
+            else
+            {
+
+                <style>
+                    .footer {
+                        margin-top: 70px;
+                    }
+                </style>
+            }
+        
     </section>
 </div>
+}
+else
+{
+<div>
+    <h1>Oops, here is no sneakers yet</h1>
+</div>
+<style>
+    .footer {
+        position: fixed;
+        bottom: 0;
+    }
+    .pb-3{
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+</style>
+}
 <footer class="footer">
-    This is the footer content.
+    <div class="contacts">
+        <span>Contacts</span>
+        <div class="links">
+            <a href="tel:+380679555670">+380679555670</a>
+            <a href="mailto:mvladyslav02@gmail.com">mvladyslav02@gmail.com</a>
+        </div>
+    </div>
+    <p>© Sneakershop 2023 All rights reserved</p>
+    <div class="top-up"><img src="http://localhost:8000/api/images/tick.svg" alt=""></div>
 </footer>
 <script>
     const loadButton = document.getElementById("load-more");
@@ -45,4 +84,9 @@
             console.log(scrollTop);
         });
     }
+
+    const topUp = document.querySelector('.top-up');
+    topUp.addEventListener('click', () => {
+        window.scrollTo(0, 0);
+    })
 </script>

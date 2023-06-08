@@ -22,11 +22,13 @@ public class AccountController : Controller
 
     private readonly JWT _jwt;
 
+    private readonly OrderRepository _orderRepository;
 
-    public AccountController(UserRepository _repository, JWT jwt)
+    public AccountController(UserRepository _repository, JWT jwt, OrderRepository _orderRepository)
     {
         this._jwt = jwt;
         this._repository = _repository;
+        this._orderRepository = _orderRepository; 
     }
 
 
@@ -304,5 +306,14 @@ public class AccountController : Controller
         HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userToUpdate));
 
         return Redirect("/profile");
+    }
+
+    [HttpGet]
+    [Route("/account/orders")]
+    public async Task<IActionResult> Orders()
+    {
+        var model = await _orderRepository.GetOrders();
+
+        return View();
     }
 }

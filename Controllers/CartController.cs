@@ -168,6 +168,12 @@ namespace practice.Controllers
 
             await _orderRepository.Add(checkoutOrder);
 
+            string? token = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                await _userRepository.SetOrder(_jwt.GetCurrentUser(token)!, checkoutOrder.Id);
+            }
+
             StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
 
             var options = new SessionCreateOptions

@@ -20,9 +20,9 @@ public class HomeController : Controller
             var list = await _repository.GetFewAsync(12);
             return View(list);
         }
-        catch(Exception)
+        catch (Exception)
         {
-            return Redirect("/Error");
+            return View();
         }
     }
 
@@ -30,13 +30,20 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(int load)
     {
-        int totalcount = await _repository.CountAsync();
-        ViewBag.totalPageCount = totalcount;
-        if (load > totalcount)
-            return Redirect($"/load={totalcount}");
+        try
+        {
+            int totalcount = await _repository.CountAsync();
+            ViewBag.totalPageCount = totalcount;
+            if (load > totalcount)
+                return Redirect($"/load={totalcount}");
 
-        var list = await _repository.GetFewAsync(load);
-        return View(list);
+            var list = await _repository.GetFewAsync(load);
+            return View(list);
+        }
+        catch (Exception)
+        {
+            return View();
+        }
     }
 
     [Route("/{name}")]

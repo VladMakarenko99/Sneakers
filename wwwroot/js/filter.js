@@ -20,8 +20,7 @@ window.onload = function () {
     let scrollTop = localStorage.getItem('scrollPosition');
     if (scrollTop !== null && window.location.pathname.includes("load=")) {
         let num = Number(scrollTop);
-        window.scrollTo(0, num + 200);
-        console.log(scrollTop);
+        window.scrollTo(0, num);
     }
     loadSliderValues();
     loadSortValue();

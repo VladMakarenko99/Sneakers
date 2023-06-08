@@ -28,7 +28,7 @@
 				<div class="name-fields">
 					<label for="first-name">First Name:</label>
 					<input type="text" class="first-name" asp-for="FirstName" value="@ViewBag.userFirstName"
-					name="first-name" required>
+						name="first-name" required>
 					<label for="last-name">Last Name:</label>
 					<input type="text" name="last-name" asp-for="LastName" value="@ViewBag.userLastName" required>
 				</div>
@@ -60,7 +60,6 @@
 		}
 		@foreach (var item in list)
 		{
-			@* string src = "img/" + item.Image?.Replace("img/", "")?.Replace(".jpeg", "") + ".jpeg" ?? ""; *@
 			string src = $"http://localhost:8000/api/images/{item.Image}";
 			src = src.Replace(' ', '-');
 			<div class="product">

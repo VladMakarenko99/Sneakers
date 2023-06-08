@@ -211,10 +211,12 @@ p {
 }
 
 .buttons {
-  margin-top: 170px;
+  margin-top: 130px;
   display: flex;
-  justify-content: space-between;
-  /* align-items: start; */
+  flex-direction: column;
+  justify-content: start;
+  padding: 0 30% 0 0;
+  gap: 10px;
 }
 
 .button {

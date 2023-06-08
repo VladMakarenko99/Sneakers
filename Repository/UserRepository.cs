@@ -33,6 +33,13 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task SetOrder(User user, Guid id)
+    {
+        user.OrderId = id;
+        _context.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task Update(User user)
     {
         _context.Update(user);

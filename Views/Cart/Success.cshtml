@@ -1,4 +1,5 @@
 @model List<Item>
+
 <head>
     <title>Success</title>
 </head>
@@ -11,13 +12,26 @@
 </div>
 
 <div class="items">
-        @foreach (var item in Model)
-        {
-            <p>@item.Name</p>
-        }
+    <h2>View Order:</h2>
+    @foreach (var item in Model)
+    {
+        string src = $"http://localhost:8000/api/images/{item.Image}";
+        src = src.Replace(' ', '-');
+        <div class="product">
+            <img src="@src">
+            <h3>@item.Name</h3>
+            <p>$@item.Price</p>
+        </div>
+    }
 </div>
 
 <style>
+    h2 {
+        margin: auto;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
     .success {
         margin-top: 10%;
         width: 100%;
@@ -38,5 +52,26 @@
     .title p {
         color: green;
         font-size: 16px;
+    }
+
+    .items {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product {
+        width: 100%;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .product img {
+        width: 150px;
+    }
     }
 </style>

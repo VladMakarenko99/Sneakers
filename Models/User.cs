@@ -20,7 +20,9 @@ namespace practice.Models
 
 		public string? CartItemsJson { get; set; } 
 
-		public byte[]? ProfilePhoto { get; set; }		
+		public byte[]? ProfilePhoto { get; set; }	
+
+		public Guid? OrderId { get; set; }	
         public User()
 		{
 		}

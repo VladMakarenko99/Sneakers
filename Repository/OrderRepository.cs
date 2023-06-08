@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using practice.Data;
 using practice.Models;
 
@@ -15,5 +16,10 @@ namespace practice.Repository
         }
 
         public Order? GetById(string id) => _context.Orders.FirstOrDefault(x => x.Id == new Guid(id));
+
+        public async Task<List<Order>> GetOrders()
+        {
+            return await _context.Orders.ToListAsync();
+        }
     }
 }

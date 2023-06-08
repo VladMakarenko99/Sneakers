@@ -15,5 +15,7 @@ namespace practice.Repository
         public Task Update(User user);
 
         public Task UploadPhotoAsync(User user, IFormFile profilePhoto);
+
+        public Task SetOrder(User user, Guid id);
     }
 }
