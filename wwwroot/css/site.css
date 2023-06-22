@@ -81,23 +81,6 @@ header {
   color: white;
 }
 
-@media only screen and (max-width: 600px) {
-
-  .header-left,
-  .header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .header-title {
-    text-align: center;
-  }
-
-  .header-right {
-    margin-top: 10px;
-  }
-}
 
 .btn {
   display: block;
@@ -115,6 +98,13 @@ header {
   color: #376581;
   outline: none;
 
+}
+
+.user {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn.reg {
@@ -172,4 +162,113 @@ header {
 #footer .socials {
   margin-bottom: 30px;
   margin-left: 30px;
+}
+
+
+.account {
+    visibility: hidden;
+}
+
+@media screen and (max-width: 666px) {
+  .header-title {
+    display: none;
+  }
+
+  .btn.reg {
+    display: none;
+  }
+
+  .cartdiv {
+    margin-right: 0;
+  }
+
+  .cartdiv .cart {
+    width: 30px;
+    height: 31px;
+    margin-left: 15px;
+  }
+
+  .cartdiv .counter {
+    width: 15px;
+    height: 15px;
+  }
+
+  .header-right {
+    margin-left: 0;
+    margin-right: 30px;
+  }
+
+  .header-left {
+    margin-left: 30px;
+  }
+
+  #hello {
+    display: none;
+  }
+
+  #logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .header-right,
+  .header-left {
+    margin: 15px;
+  }
+
+  .user {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+  }
+
+ .account{
+  visibility: visible;
+  width: 28px;
+  height: 28px;
+  order: 2;
+ }
+
+  .btn.auth {
+    display: inline;
+    visibility: visible;
+    padding: 0;
+    font-size: 16px;
+    background: none;
+    border: none;
+    margin: 0;
+    height: auto;
+    width: auto;
+    color: #376581;
+    margin-right: 20px;
+  }
+
+  .btn.auth:hover,
+  .btn.auth:focus {
+    background: none;
+    color: #376581;
+  }
+
+  header .header-right .user .btn.reg.logout {
+    order: 1;
+    display: inline;
+    visibility: visible;
+    padding: 0;
+    font-size: 16px;
+    background: none;
+    border: none;
+    margin: 0;
+    height: auto;
+    width: auto;
+    color: #376581;
+  }
+  #modal .modal-header .title{
+    font-size: 25px;
+  }
+  .modal-header{
+    margin-bottom: 20px;
+  }
+  #modal{
+    height: 260px;
+  }
 }

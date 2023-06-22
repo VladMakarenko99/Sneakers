@@ -11,6 +11,7 @@ namespace practice.Controllers
             var exceptionHandler = HttpContext.Features.Get<IExceptionHandlerFeature>();
             ViewBag.exceptionPath = exceptionHandler?.Path;
             ViewBag.exceptionMessage = exceptionHandler?.Error.Message;
+            
             return View();
         }
     }

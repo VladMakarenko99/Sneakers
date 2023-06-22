@@ -44,20 +44,20 @@ function setCheckedBrandValue(value, checked) {
 }
 
 function findBrandString(inputString) {
-    const regex = /(brand=[\w+-]+)/;
+    const regex = /(brand=[\w*-]+)/;
     const matches = inputString.match(regex);
     if (!matches) {
         return '';
     }
     const brandString = matches[1].replace('q:', '');
-    const brands = brandString.split('=')[1].split('+');
+    const brands = brandString.split('=')[1].split('*');
     const validBrands = brands.filter((brand) =>
         ['Nike', 'Adidas', 'New-Balance'].includes(brand)
     );
     if (validBrands.length === 0) {
         return '';
     }
-    return `brand=${validBrands.join('+')}`;
+    return `brand=${validBrands.join('*')}`;
 }
 
 function updateUrlWithBrandString(checkbox) {
@@ -73,13 +73,13 @@ function updateUrlWithBrandString(checkbox) {
             brandString += 'brand=' + checkbox.value;
         } else if (!brandString.includes(checkbox.value) && brandString.includes('brand=')) {
             console.log(brandString + " add");
-            brandString += '+' + checkbox.value;
+            brandString += '*' + checkbox.value;
         }
     } else {
         brandString = brandString
-            .replace('+' + checkbox.value, '')
+            .replace('*' + checkbox.value, '')
             .replace(checkbox.value, '')
-            .replace('brand=+', 'brand=');
+            .replace('brand=*', 'brand=');
         console.log(brandString + " return");
     }
     brandString = brandString.replace(/\/+/g, '/');
@@ -124,10 +124,10 @@ brandCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
         setCheckedBrandValue(value, checkbox.checked);
         if (updateUrlWithBrandString(checkbox) === '') {
-            window.location.href = "/";
+            HandleUrl("/");
             return;
         }
-        window.location.href = updateUrlWithBrandString(checkbox);
+        HandleUrl(updateUrlWithBrandString(checkbox));
     });
 });
 
@@ -148,13 +148,13 @@ function setCheckedCategoryValue(value, checked) {
 }
 
 function findCategoryString(inputString) {
-    const regex = /(category=[\w+-]+)/;
+    const regex = /(category=[\w*-]+)/;
     const matches = inputString.match(regex);
     if (!matches) {
         return '';
     }
     const brandString = matches[1].replace('q:', '');
-    const brands = brandString.split('=')[1].split('+');
+    const brands = brandString.split('=')[1].split('*');
     const validBrands = brands.filter((brand) =>
         ['Everyday', 'Basketball', 'Running', 'Skating', 'Football', 'Handball'].includes(brand)
     );
@@ -162,8 +162,8 @@ function findCategoryString(inputString) {
         return '';
     }
 
-    console.log(`category=${validBrands.join('+')}`);
-    return `category=${validBrands.join('+')}`;
+    console.log(`category=${validBrands.join('*')}`);
+    return `category=${validBrands.join('*')}`;
 }
 
 function updateUrlWithCategoryString(checkbox) {
@@ -178,13 +178,13 @@ function updateUrlWithCategoryString(checkbox) {
             brandString += 'category=' + checkbox.value;
         } else if (!brandString.includes(checkbox.value) && brandString.includes('category=')) {
             console.log(brandString + " add");
-            brandString += '+' + checkbox.value;
+            brandString += '*' + checkbox.value;
         }
     } else {
         brandString = brandString
-            .replace('+' + checkbox.value, '')
+            .replace('*' + checkbox.value, '')
             .replace(checkbox.value, '')
-            .replace('category=+', 'category=');
+            .replace('category=*', 'category=');
         console.log(brandString + " return");
     }
     brandString = brandString.replace(/\/+/g, '/');
@@ -229,10 +229,10 @@ categoryCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
         setCheckedCategoryValue(value, checkbox.checked);
         if (updateUrlWithCategoryString(checkbox) === '') {
-            window.location.href = "/";
+            HandleUrl('/');
             return;
         }
-        window.location.href = updateUrlWithCategoryString(checkbox);
+        HandleUrl(updateUrlWithCategoryString(checkbox)); 
     });
 });
 
@@ -248,18 +248,6 @@ let minGap = 0;
 let sliderTrack = document.querySelector(".slider-track");
 let sliderMaxValue = document.getElementById("slider-1").max;
 
-function slideOne() {
-    if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
-        sliderOne.value = parseInt(sliderTwo.value) - minGap;
-    }
-    displayValOne.textContent = sliderOne.value;
-}
-function slideTwo() {
-    if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
-        sliderTwo.value = parseInt(sliderOne.value) + minGap;
-    }
-    displayValTwo.textContent = sliderTwo.value;
-}
 sliderOne.addEventListener("change", formPriceString);
 sliderTwo.addEventListener("change", formPriceString);
 function formPriceString() {
@@ -285,8 +273,7 @@ function formPriceString() {
 
     url = url.replace(/&+/g, "&");
 
-    // callAjax(url);
-    window.location.href = url;
+    HandleUrl(url);
     localStorage.setItem('url', url);
     localStorage.setItem("slider1Value", min);
     localStorage.setItem("slider2Value", max);
@@ -338,7 +325,7 @@ sorter.addEventListener("change", function (el) {
         }
         if (url.match(/q:sort=\w+$/))
             url = url.replace(/q:sort=\w+$/, "");
-        window.location.href = url;
+        HandleUrl(url);
         localStorage.setItem('url', url);
         return;
     }
@@ -347,24 +334,21 @@ sorter.addEventListener("change", function (el) {
     }
     else if (url.includes("&sort=ascending&") || url.includes("&sort=descending&")) {
         url = url.replace(/&sort=\w+&/, "&" + sortString + "&")
-        //callAjax(url);
-        window.location.href = url;
+        HandleUrl(url);
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
     }
     else if (url.includes("&sort=")) {
         url = url.replace(/&sort=\w+$/gm, "&" + sortString);
-        //callAjax(url);
-        window.location.href = url;
+        HandleUrl(url);
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
     }
     else if (url.includes("q:sort=")) {
         url = url.replace(/q:sort=\w+/gm, "q:" + sortString);
-        //callAjax(url);
-        window.location.href = url;
+        HandleUrl(url);
         localStorage.setItem('url', url);
         localStorage.setItem("sortValue", el.target.value);
         return;
@@ -372,8 +356,7 @@ sorter.addEventListener("change", function (el) {
     else {
         url = url + "&" + sortString;
     }
-    // callAjax(url);
-    window.location.href = url;
+    HandleUrl(url);
     localStorage.setItem('url', url);
     localStorage.setItem("sortValue", el.target.value);
 });
@@ -392,12 +375,12 @@ search.addEventListener("keyup", function (el) {
         search.value = "";
         localStorage.removeItem("searchValue");
         search.focus();
-        window.location.href = "/";
+        window.location.href = '/';
         return;
     }
     localStorage.setItem("searchValue", searchValue);
     const newUrl = "/q:search=" + searchValue;
-    history.pushState(null, null, newUrl.replace(/\s/g, '+'));
+    history.pushState(null, null, newUrl.replace(/\s/g, '*'));
 });
 
 search.addEventListener('keydown', (event) => {
@@ -413,5 +396,15 @@ function loadSearchValue() {
     if (searchValue !== null) {
         document.getElementById("search").value = searchValue;
         search.focus();
+    }
+}
+function HandleUrl(url){
+    if(window.innerWidth < 666){
+        console.log('if')
+        document.getElementById('confirm').href = url;
+    }
+    else{
+        console.log('else')
+        window.location.href = url;
     }
 }

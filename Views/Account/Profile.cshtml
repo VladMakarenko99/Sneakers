@@ -18,7 +18,7 @@
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png" />
         }
         <form asp-action="UploadPhoto" asp-controller="Account" method="post" enctype="multipart/form-data">
-            <label for="file-input"> <img src="http://localhost:8000/api/images/upload.svg"> Upload photo</label>
+            <label for="file-input"> <img src="https://published.bsite.net/api/images/upload.svg"> Upload Photo</label>
             <input type="file" id="file-input" name="file" accept=".png, .jpeg, .jpg .gif" required>
             <span asp-validation-for="ProfilePhoto" class="text-danger"></span>
             <input type="hidden" value="@Model.Email" name="user.Email">
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="buttons">
-            <a class="button manage" href="/account/manage">Manage personal data</a>
+            <a class="button manage" href="/account/manage">Manage Personal Data</a>
             <a class="button manage" href="/account/orders">View Orders</a>
             <button data-modal-target="#modal" class="button delete">Delete Account</button>
         </div>

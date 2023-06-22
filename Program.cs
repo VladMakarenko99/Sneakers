@@ -11,10 +11,18 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var userSecretsConfig = new ConfigurationBuilder()
+            .SetBasePath(Environment.CurrentDirectory)
+            .AddUserSecrets<Program>()
+            .Build();
 
 builder.Services.AddDbContext<AppDbContext>(option => option.UseMySql(
-    builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(8, 0, 0))));
+    "Server=database-1.cbx4wrodgipz.eu-north-1.rds.amazonaws.com; Port=3306; Database=vladmakarenko; Uid=admin; Pwd=GUbbn1GGbjdnjXL3UImG;",
+    new MySqlServerVersion(new Version(8, 0, 0)), option => option.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: System.TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null)).EnableDetailedErrors());
+
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -56,19 +64,17 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "http://localhost:8000",
-        ValidAudience = "http://localhost:8000",
+        ValidIssuer = "https://published.bsite.net/",
+        ValidAudience = "https://published.bsite.net/",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("G2JCIW9PkUOiN47WjTRl"))
     };
 });
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    // app.UseExceptionHandler("/Error");
 }
 else
 {
