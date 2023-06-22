@@ -2,7 +2,9 @@
 
 <head>
     <title>Success</title>
+    <link rel="stylesheet" href="~/css/succes.css">
 </head>
+
 <div class="success">
     <div class="title">
         <p>
@@ -15,7 +17,7 @@
     <h2>View Order:</h2>
     @foreach (var item in Model)
     {
-        string src = $"http://localhost:8000/api/images/{item.Image}";
+        string src = $"https://published.bsite.net/api/images/{item.Image}";
         src = src.Replace(' ', '-');
         <div class="product">
             <img src="@src">
@@ -24,54 +26,3 @@
         </div>
     }
 </div>
-
-<style>
-    h2 {
-        margin: auto;
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
-
-    .success {
-        margin-top: 10%;
-        width: 100%;
-    }
-
-    .title {
-        width: 50%;
-        margin: auto;
-        background-color: rgb(196, 245, 196);
-        border: 2px solid green;
-        border-radius: 5px;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .title p {
-        color: green;
-        font-size: 16px;
-    }
-
-    .items {
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .product {
-        width: 100%;
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 10px;
-    }
-
-    .product img {
-        width: 150px;
-    }
-    }
-</style>

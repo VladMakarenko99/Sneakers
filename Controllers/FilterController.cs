@@ -14,7 +14,7 @@ public class FilterController : Controller
 
 
     [Route("/q:{url}")]
-    public async Task<IActionResult> IndexAsync(string url)
+    public async Task<IActionResult> Index(string url)
     {
         var filteredList = await GetEntireList(url);
         ViewBag.totalPageCount = filteredList.Count;
@@ -46,8 +46,8 @@ public class FilterController : Controller
     {
         var brandList = new List<string>();
         var brandString = filter.Split("brand=")[1];
-        if (brandString.Contains("+"))
-            brandList = brandString.Split("+").ToList();
+        if (brandString.Contains("*"))
+            brandList = brandString.Split("*").ToList();
         else
             brandList.Add(brandString ?? "");
 
@@ -71,8 +71,8 @@ public class FilterController : Controller
     {
         var list = new List<string>();
         var filterString = filter.Split("category=")[1];
-        if (filterString.Contains("+"))
-            list = filterString.Split("+").ToList();
+        if (filterString.Contains("*"))
+            list = filterString.Split("*").ToList();
         else
             list.Add(filterString ?? "");
 
@@ -137,7 +137,7 @@ public class FilterController : Controller
             }
             if (filter.Contains("search="))
             {
-                string search = filter.Split("search=")[1].ToLower().Replace("+", " ");
+                string search = filter.Split("search=")[1].ToLower().Replace("*", " ");
                 filteredList = entireList.Where(x => x.Name!.ToLower().Contains(search)).ToList();
             }
         }

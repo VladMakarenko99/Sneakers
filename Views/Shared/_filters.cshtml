@@ -4,12 +4,12 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="filters">
 
-    <div class="filter">
+    <div class="filter first">
         <p>Search: </p>
         <input type="text" id="search" class="search" placeholder="Search">
         <a href="">
-            <img src="http://localhost:8000/api/images/search.svg" id="search-icon" alt="">
-            </a>
+            <img src="https://published.bsite.net/api/images/search.svg" id="search-icon" alt="">
+        </a>
         </input>
         <div class="press-enter">Press enter to confirm a search</div>
     </div>
@@ -85,5 +85,27 @@
             <option value="descending">Descending</option>
         </select>
     </div>
+    <a href="" id="confirm">Confirm</a>
 </div>
 <script type="module" src="~/js/filter.js"></script>
+<script>
+    let sliderOne = document.getElementById("slider-1");
+    let sliderTwo = document.getElementById("slider-2");
+    let displayValOne = document.getElementById("range1");
+    let displayValTwo = document.getElementById("range2");
+    let minGap = 0;
+
+
+    function slideOne() {
+        if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+            sliderOne.value = parseInt(sliderTwo.value) - minGap;
+        }
+        displayValOne.textContent = sliderOne.value;
+    }
+    function slideTwo() {
+        if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+            sliderTwo.value = parseInt(sliderOne.value) + minGap;
+        }
+        displayValTwo.textContent = sliderTwo.value;
+    }
+</script>

@@ -18,11 +18,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/account.css">
     <title>@ViewData["Title"]</title>
-    <link rel="shortcut icon" type="image/x-icon" href="http://localhost:8000/api/images/IMG_8604.PNG"/>
+    <link rel="shortcut icon" type="image/x-icon" href="https://published.bsite.net/api/images/IMG_8604.PNG" />
 </head>
 
 <body>
-    <div class="form">
+    <a href="/" class="back">/ Home Page</a>
+    <div class="form login">
         <form asp-action="Login" method="post">
             <h1 class="label">@ViewData["Title"]</h1>
             <div class="form-group -login">
@@ -32,9 +33,9 @@
             </div>
 
             <div class="form-group -login">
-                <input asp-for="Password" type="password" class="input" id="password" placeholder=" " /><br>
+                <input asp-for="Password" type="password" class="input password" placeholder=" " /><br>
                 <label class="control-label">Password</label>
-                <i class="fa-solid fa-eye" id="show"></i>
+                <i class="fa-solid fa-eye show"></i>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
@@ -42,7 +43,7 @@
         </form>
         <span>Still don`t have an account? </span><a asp-controller="Account" asp-action="Register"
             id="login">Register</a>
-         <a class="google-btn" href="@ViewBag.GoogleAuthUrl">
+        <a class="google-btn" href="@ViewBag.GoogleAuthUrl">
             <div class="google-icon-wrapper">
                 <img class="google-icon"
                     src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
@@ -50,20 +51,8 @@
             <p class="btn-text">Continue with Google</p>
         </a>
     </div>
-    <script>
-        const showPassword = document.querySelector("#show");
-        const passField = document.querySelector("#password");
+    <script src="~/js/showPwd.js"></script>
 
-        showPassword.addEventListener("click", function () {
-            this.classList.toggle("fa-eye-slash");
-            const type = passField.getAttribute("type") === "password" ? "text" : "password";
-            passField.setAttribute("type", type);
-            if (passField.type === "text")
-                showPassword.style.color = "#376581";
-            else
-                showPassword.style.color = "#bababa";
-        })
-    </script>
 </body>
 
 </html>

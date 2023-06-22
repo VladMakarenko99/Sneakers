@@ -20,6 +20,7 @@ form {
     font-weight: 500;
     font-size: 40px;
 }
+
 .form-group {
     position: relative;
     margin-bottom: 45px;
@@ -34,7 +35,7 @@ form {
     margin-bottom: 10px;
 }
 
- .input {
+.input {
     width: 100%;
     padding: 5px 0 5px 0;
     border: none;
@@ -44,11 +45,11 @@ form {
     font-size: 17px;
 }
 
- .input:focus {
+.input:focus {
     border-bottom: 2px solid #376581;
 }
 
- .button {
+.button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -59,10 +60,10 @@ form {
     transition: 0.5s;
     font-size: 22px;
     text-align: center;
- }
+}
 
- .button:focus,
- .button:hover {
+.button:focus,
+.button:hover {
     background-color: #0a3856;
 }
 
@@ -76,4 +77,16 @@ form {
 form .input.input-validation-error {
     border-color: red;
     margin-bottom: 7px;
+}
+
+@media screen and (max-width: 666px) {
+    .main-content {
+        width: 100%;
+    }
+    form{
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        margin: 100px 0 0 0;
+    }
 }

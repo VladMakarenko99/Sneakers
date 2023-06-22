@@ -24,6 +24,7 @@ body {
     justify-content: center;
     align-items: center;
     display: flex;
+    flex-direction: column;
     height: 100vh;
     font-family: 'Roboto', sans-serif;
 }
@@ -154,4 +155,38 @@ body {
 
 .google-btn:hover .google-icon-wrapper {
     background-color: #eeeded;
+}
+
+.back{
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    color: #376581;
+}
+.back:hover{color: #0a3856;}
+@media screen and (max-width: 666px) {
+    .form{
+        border: none;
+        width: 100%;
+        box-shadow: none;
+    }
+    .label{
+        font-size: 35px;
+    }
+    .back{
+        top: 15px;
+        left: 15px;
+    }
+    body{
+        gap: 0;
+    }
+    .form.login{
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    .form.register{
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-top: 20px;
+    }
 }

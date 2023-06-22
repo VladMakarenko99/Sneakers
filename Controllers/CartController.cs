@@ -178,7 +178,7 @@ namespace practice.Controllers
 
             var options = new SessionCreateOptions
             {
-                SuccessUrl = $"http://localhost:8000/checkout/success/{checkoutOrder.Id}",
+                SuccessUrl = $"https://published.bsite.net/checkout/success/{checkoutOrder.Id}",
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions

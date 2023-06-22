@@ -3,31 +3,39 @@
     ViewData["Title"] = "Home page";
 }
 <title>@ViewData["Title"]</title>
-<link rel="stylesheet" href="css/home.css" />
+<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="~/css/modal.css" />
+
 @if (Model != null)
 {
     int count = Model.Count + 4;
-<div class="main">
-    <div class="sidenav">
+    <div class="main">
+    <div class="sidenav modal" id="modal">
         <partial name="_filters" />
     </div>
     <section class="main-content">
+        <div class="settings">
+            <button data-modal-target="#modal" class="open-filters">Open Filters</button>
+            <a href="/" class="open-filters">Reset Filters</a>
+        </div>
         <div class="product-grid">
             @foreach (var item in Model)
                 {
                     <div class="product">
                         @{
-                            string src = $"http://localhost:8000/api/images/{item.Image}";
+                            string src = $"https://vladyslav067.bsite.net/api/images/{item.Image}";
                             src = src.Replace(' ', '-');
                             item.Name = item.Name?.Replace(' ', '-');
                         }
                         <a href="/@item.Name"><img src="@src" alt="img" /></a>
-                        <h3>@item.Name?.Replace('-', ' ')</h3>
-                        <p>@item.Price $</p>
+                        <div class="info">
+                            <h3>@item.Name?.Replace('-', ' ')</h3>
+                            <p>@item.Price $</p>
+                        </div>
                     </div>
                 }
 
-        </div>
+            </div>
             @if (Model.Count != ViewBag.totalPageCount)
             {
                 <a id="load-more" href="/load=@count">Load more</a>
@@ -41,21 +49,23 @@
                     }
                 </style>
             }
-        
-    </section>
-</div>
+
+        </section>
+    </div>
 }
 else
 {
-<div>
-    <h1>Oops, here is no sneakers yet</h1>
+    <div>
+    <h1>@ViewBag.connString</h1>
+    <h1>@ViewBag.innerException</h1>
 </div>
-<style>
+    <style>
     .footer {
         position: fixed;
         bottom: 0;
     }
-    .pb-3{
+
+    .pb-3 {
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -73,20 +83,6 @@ else
         </div>
     </div>
     <p>© Sneakershop 2023 All rights reserved</p>
-    <div class="top-up"><img src="http://localhost:8000/api/images/tick.svg" alt=""></div>
+    <div class="top-up"><img src="https://vladyslav067.bsite.net/api/images/tick.svg" alt=""></div>
 </footer>
-<script>
-    const loadButton = document.getElementById("load-more");
-    if (loadButton !== null) {
-        loadButton.addEventListener('click', () => {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            localStorage.setItem('scrollPosition', scrollTop);
-            console.log(scrollTop);
-        });
-    }
-
-    const topUp = document.querySelector('.top-up');
-    topUp.addEventListener('click', () => {
-        window.scrollTo(0, 0);
-    })
-</script>
+<script src="~/js/scroll.js"></script>

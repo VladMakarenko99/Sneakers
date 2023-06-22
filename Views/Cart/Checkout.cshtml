@@ -60,7 +60,7 @@
 		}
 		@foreach (var item in list)
 		{
-			string src = $"http://localhost:8000/api/images/{item.Image}";
+			string src = $"https://published.bsite.net/api/images/{item.Image}";
 			src = src.Replace(' ', '-');
 			<div class="product">
 				<img src="@src">

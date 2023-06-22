@@ -1,6 +1,6 @@
 @model practice.Models.User;
 @{
-    ViewData["Title"] = "Log In";
+    ViewData["Title"] = "Register";
     Layout = null;
     ViewBag.GoogleAuthUrl = "/account/google-login";
 }
@@ -18,11 +18,12 @@
     <title>@ViewData["Title"]</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/account.css">
-    <link rel="shortcut icon" type="image/x-icon" href="http://localhost:8000/api/images/IMG_8604.PNG" />
+    <link rel="shortcut icon" type="image/x-icon" href="https://published.bsite.net/api/images/IMG_8604.PNG" />
 </head>
 
 <body>
-    <div class="form">
+    <a href="/" class="back">/ Home Page</a>
+    <div class="form register">
         <form asp-action="Register" method="post">
             <h1 class="label">@ViewData["Title"]</h1>
 
@@ -45,23 +46,22 @@
             </div>
 
             <div class="form-group">
-                <input asp-for="Password" type="password" class="input" id="password1" placeholder=" " /><br />
+                <input asp-for="Password" type="password" class="input password" placeholder=" " /><br />
                 <label class="control-label">Password</label>
-                <i class="fa-solid fa-eye" id="show1"></i>
+                <i class="fa-solid fa-eye show"></i>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <input asp-for="ConfirmedPass" type="password" class="input" id="password2" placeholder=" " /><br />
+                <input asp-for="ConfirmedPass" type="password" class="input password" placeholder=" " /><br />
                 <label class="control-label">Confirm Password</label>
-                <i class="fa-solid fa-eye" id="show2"></i>
+                <i class="fa-solid fa-eye show"></i>
                 <span asp-validation-for="ConfirmedPass" class="text-danger"></span>
             </div>
 
             <input type="submit" class="button" value="Register" />
         </form>
         <span>Already have an account? </span><a asp-controller="Account" asp-action="Login" id="login">Log in</a>
-        @* <p><a href="@ViewBag.GoogleAuthUrl">Register with Google</a></p> *@
         <a class="google-btn" href="@ViewBag.GoogleAuthUrl">
             <div class="google-icon-wrapper">
                 <img class="google-icon"
@@ -70,31 +70,11 @@
             <p class="btn-text">Continue with Google</p>
         </a>
     </div>
-    <script>const showPassword1 = document.querySelector("#show1");
-        const showPassword2 = document.querySelector("#show2");
-
-        const passField1 = document.querySelector("#password1");
-        const passField2 = document.querySelector("#password2");
-
-        showPassword1.addEventListener("click", function () {
-            this.classList.toggle("fa-eye-slash");
-            const type = passField1.getAttribute("type") === "password" ? "text" : "password";
-            passField1.setAttribute("type", type);
-            if (passField1.type === "text")
-                showPassword1.style.color = "#376581";
-            else
-                showPassword1.style.color = "#bababa";
-        })
-
-        showPassword2.addEventListener("click", function () {
-            this.classList.toggle("fa-eye-slash");
-            const type = passField2.getAttribute("type") === "password" ? "text" : "password";
-            passField2.setAttribute("type", type);
-            if (passField2.type === "text")
-                showPassword2.style.color = "#376581";
-            else
-                showPassword2.style.color = "#bababa";
-        })</script>
+    <script src="~/js/showPwd.js"></script>
 </body>
-
+<style>
+    .form-group{
+        margin-bottom: 30px;
+    }
+</style>
 </html>

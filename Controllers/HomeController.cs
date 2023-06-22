@@ -14,14 +14,17 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        ViewBag.connString = builder.Configuration.GetConnectionString("DefaultConnection");
         try
         {
             ViewBag.totalPageCount = await _repository.CountAsync();
             var list = await _repository.GetFewAsync(12);
             return View(list);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            ViewBag.innerException = ex.InnerException;
             return View();
         }
     }

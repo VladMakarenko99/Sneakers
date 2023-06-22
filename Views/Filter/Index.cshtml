@@ -1,20 +1,27 @@
 @model List<Item>
-
+@{
+    ViewData["Title"] = "Filter";
+}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@ViewBag.url</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/home.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/modal.css" />
 </head>
 
 <div class="main">
-    <div class="sidenav">
+    <div class="sidenav modal" id="modal">
         <partial name="_filters" />
     </div>
     <div class="main-content">
+        <div class="settings">
+            <button data-modal-target="#modal" class="open-filters">Open Filters</button>
+            <a href="/" class="open-filters">Reset Filters</a>
+        </div>
         @if (Model.Count == 0)
         {
             <style>
@@ -34,7 +41,7 @@
                 {
                     <div class="product">
                         @{
-                            string src = $"http://localhost:8000/api/images/{item.Image}";
+                            string src = $"https://published.bsite.net/api/images/{item.Image}";
                             src = src.Replace(' ', '-');
                             item.Name = item.Name?.Replace(' ', '-');
                         }
@@ -62,17 +69,8 @@
         </div>
     </div>
     <p>© Sneakershop 2023 All rights reserved</p>
-    <div class="top-up"><img src="http://localhost:8000/api/images/tick.svg" alt=""></div>
+    <div class="top-up"><img src="https://published.bsite.net/api/images/tick.svg" alt=""></div>
 </footer>
-<script>
-    const loadButton = document.getElementById("load-more");
-    if(loadButton !== null){
-        loadButton.addEventListener('click', () => {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        localStorage.setItem('scrollPosition', scrollTop);
-        console.log(scrollTop);
-    });
-    }
-</script>
+<script src="~/js/scroll.js"></script>
 
 </html>

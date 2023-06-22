@@ -3,27 +3,34 @@
 <link rel="stylesheet" href="~/css/site.css" />
 
 @{
-    if (Context.Session.GetInt32("LoginedUserProductCount") == null){
+    if (Context.Session.GetInt32("LoginedUserProductCount") == null)
+    {
         ViewBag.itemCount = 0;
     }
-    else{
+    else
+    {
         ViewBag.itemCount = Context.Session.GetInt32("LoginedUserProductCount");
     }
-    
+
     var user = new JWT().GetCurrentUser(Context.Session.GetString("JwtToken"));
-    if(user != null){
-        <a id="hello" href="/profile">Hello, @user.FirstName</a>
-        <a asp-controller="Account" asp-action="Logout" class="btn reg">Log Out</a>
+    if (user != null)
+    {
+        <div class="user">
+            <a id="hello" href="/profile">Hello, @user.FirstName</a>
+            <a href="/profile" class="account"><img src="https://published.bsite.net/api/images/account.svg" alt=""></a>
+            <a asp-controller="Account" asp-action="Logout" class="btn reg logout">Log Out</a>
+        </div>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="http://localhost:8000/api/images/cart.svg" /></a>
+            <a href="/cart"><img class="cart" src="https://published.bsite.net/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
     }
-    else{
+    else
+    {
         <a class="btn auth" href="/account/login">Log In</a>
         <a class="btn reg" href="/account/register">Register</a>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="http://localhost:8000/api/images/cart.svg" /></a>
+            <a href="/cart"><img class="cart" src="https://published.bsite.net/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
     }
