@@ -76,3 +76,6 @@ _[Ss]cripts
 *.idea
 *.vs
 *.vscode
+bin
+obj
+appsettings.json

@@ -19,7 +19,8 @@ var userSecretsConfig = new ConfigurationBuilder()
             .Build();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql("Server=database-postgre.cbx4wrodgipz.eu-north-1.rds.amazonaws.com;Port=5432;Database=postgres;User Id=postgre;Password=gab1LNfeV6VTjCQaZ0NN;"));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddDistributedMemoryCache();
 
