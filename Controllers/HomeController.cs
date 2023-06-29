@@ -7,8 +7,8 @@ namespace practice.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ItemRepository _repository;
-    public HomeController(ItemRepository repository) => this._repository = repository;
+    private readonly IItemRepository _repository;
+    public HomeController(IItemRepository repository) => this._repository = repository;
 
     [Route("/")]
     [HttpGet]

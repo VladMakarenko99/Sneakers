@@ -16,6 +16,6 @@ namespace practice.Repository
 
         public Task UploadPhotoAsync(User user, IFormFile profilePhoto);
 
-        public Task SetOrder(User user, Guid id);
+        public Task<List<Order>> GetOrders (int userId);
     }
 }

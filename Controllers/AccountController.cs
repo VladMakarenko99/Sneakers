@@ -18,17 +18,18 @@ namespace practice.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserRepository _repository;
-
     private readonly JWT _jwt;
 
-    private readonly OrderRepository _orderRepository;
+    private readonly IOrderRepository _orderRepository;
 
-    public AccountController(UserRepository _repository, JWT jwt, OrderRepository _orderRepository)
+    private readonly IUserRepository _repository;
+
+
+    public AccountController(IUserRepository _repository, JWT jwt, IOrderRepository _orderRepository)
     {
         this._jwt = jwt;
         this._repository = _repository;
-        this._orderRepository = _orderRepository; 
+        this._orderRepository = _orderRepository;
     }
 
 
@@ -290,7 +291,7 @@ public class AccountController : Controller
     {
         if (string.IsNullOrEmpty(user.FirstName))
             ModelState.AddModelError(nameof(user.FirstName), "This field is required!");
-            
+
         if (string.IsNullOrEmpty(user.LastName))
             ModelState.AddModelError(nameof(user.LastName), "This field is required!");
 
@@ -312,8 +313,16 @@ public class AccountController : Controller
     [Route("/account/orders")]
     public async Task<IActionResult> Orders()
     {
-        var model = await _orderRepository.GetOrders();
+        string? token = HttpContext.Session.GetString("JwtToken");
+        if (!string.IsNullOrEmpty(token))
+        {
+            var userId = _jwt.GetCurrentUser(token)!.Id;
+            var orders = await _repository.GetOrders(userId);
+            if (orders == null)
+                return View(null);
+            return View(orders);
+        }
 
-        return View();
+        return NotFound();
     }
 }

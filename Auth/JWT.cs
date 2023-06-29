@@ -22,7 +22,8 @@ public class JWT
             new Claim(ClaimTypes.Email, user.Email!),
             new Claim(ClaimTypes.GivenName, user.FirstName!),
             new Claim(ClaimTypes.Surname, user.LastName!),
-            new Claim("CartItemsJson", user.CartItemsJson ?? "")
+            new Claim("CartItemsJson", user.CartItemsJson ?? ""),
+            new Claim("UserId", user.Id.ToString())
         }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -56,6 +57,10 @@ public class JWT
                 case "CartItemsJson":
                     user.CartItemsJson = claim.Value;
                     break;
+                case "UserId":
+                if (int.TryParse(claim.Value, out int userId))
+                    user.Id = userId;
+                break;
             }
         }
         return user;

@@ -6,31 +6,36 @@
 }
 
 <title>@ViewData["Title"]</title>
+<link rel="stylesheet" href="~/css/orders.css">
 
-@if(Model != null)
+@if (Model != null && Model.Count != 0)
 {
-<div class="content">
-    @foreach (var order in Model)
-    {
-        var list = JsonConvert.DeserializeObject<List<Item>>(order.ItemsJson!) ?? new List<Item>();
-        <div class="order">
-            <p>@order.Id</p>
-            @foreach (var item in list)
+    <div class="content">
+    <div class="orders-grid">
+        @foreach (var order in Model)
             {
-                <p>@item.Name</p>
+                var list = JsonConvert.DeserializeObject<List<Item>>(order.ItemsJson!) ?? new List<Item>();
+                <div class="order">
+                    <p id="id">Order Id: @order.Id</p>
+                    <p>Items:</p>
+                    <div class="items">
+                        @foreach (var item in list)
+                        {
+                            <div class="item">
+                                <img class="img" src="https://published.bsite.net/api/images/@item.Image" alt="">
+                                <p>@item.Name</p>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
         </div>
-    }
-</div>
-}
-else{
-    <div class="content">
-        <h1>You have no orders yet</h1>
+
     </div>
 }
-
-<style>
-    .content{
-        margin-top: 10%;
-    }
-</style>
+else
+{
+    <div class="content">
+    <h1>You have no orders yet</h1>
+</div>
+}

@@ -63,6 +63,11 @@
     width: 100%;
     height: auto;
   }
+
+  .user .account img{
+    height: 0;
+    display: none;
+  }
   
 .dropdown {
     appearance: none;

@@ -22,5 +22,7 @@ namespace practice.Models
         public string? ItemsJson { get; set; }
 
         public int? TotalPrice { get; set; }   
+
+        public int UserId { get; set; } 
     }
 }

@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using practice.Auth;
 using practice.Repository;
+using Npgsql;
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +18,8 @@ var userSecretsConfig = new ConfigurationBuilder()
             .AddUserSecrets<Program>()
             .Build();
 
-builder.Services.AddDbContext<AppDbContext>(option => option.UseMySql(
-    "Server=database-1.cbx4wrodgipz.eu-north-1.rds.amazonaws.com; Port=3306; Database=vladmakarenko; Uid=admin; Pwd=GUbbn1GGbjdnjXL3UImG;",
-    new MySqlServerVersion(new Version(8, 0, 0)), option => option.EnableRetryOnFailure(
-                    maxRetryCount: 5,
-                    maxRetryDelay: System.TimeSpan.FromSeconds(30),
-                    errorNumbersToAdd: null)).EnableDetailedErrors());
-
+builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql("Server=database-postgre.cbx4wrodgipz.eu-north-1.rds.amazonaws.com;Port=5432;Database=postgres;User Id=postgre;Password=gab1LNfeV6VTjCQaZ0NN;"));
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -32,9 +29,9 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddScoped<JWT>();
-builder.Services.AddTransient<ItemRepository>();
-builder.Services.AddTransient<OrderRepository>();
-builder.Services.AddTransient<UserRepository>();
+builder.Services.AddTransient<IItemRepository, ItemRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -22,7 +22,6 @@ namespace practice.Models
 
 		public byte[]? ProfilePhoto { get; set; }	
 
-		public Guid? OrderId { get; set; }	
         public User()
 		{
 		}

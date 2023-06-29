@@ -11,11 +11,11 @@ namespace practice.Controllers
 {
     public class CartController : Controller
     {
-        private readonly OrderRepository _orderRepository;
-        private readonly UserRepository _userRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IUserRepository _userRepository;
         private readonly JWT _jwt;
 
-        public CartController(JWT jwt, OrderRepository _repository, UserRepository _userRepository)
+        public CartController(JWT jwt, IOrderRepository _repository, IUserRepository _userRepository)
         {
             this._jwt = jwt;
             this._orderRepository = _repository;
@@ -151,6 +151,7 @@ namespace practice.Controllers
         [HttpPost]
         public async Task<IActionResult> Pay(Order order)
         {
+            System.Console.WriteLine(order.FirstName + " ++++ " + order.LastName);
             string order_desc = "";
             var checkoutOrder = new Order
             {
@@ -161,24 +162,25 @@ namespace practice.Controllers
                 Town = order.Town,
                 Address = order.Address,
                 ItemsJson = HttpContext.Session.GetString("cartItems"),
-                TotalPrice = order.TotalPrice
+                TotalPrice = order.TotalPrice,
+                UserId = 0
             };
             foreach (var item in GetSessionList("cartItems"))
                 order_desc += item.Name + ", ";
 
-            await _orderRepository.Add(checkoutOrder);
-
-            string? token = HttpContext.Session.GetString("JwtToken");
+            string? token = HttpContext.Session.GetString("JwtToken");   
             if (!string.IsNullOrEmpty(token))
             {
-                await _userRepository.SetOrder(_jwt.GetCurrentUser(token)!, checkoutOrder.Id);
+                checkoutOrder.UserId = _jwt.GetCurrentUser(token)!.Id;
             }
+            await _orderRepository.Add(checkoutOrder);
+
 
             StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
 
             var options = new SessionCreateOptions
             {
-                SuccessUrl = $"https://published.bsite.net/checkout/success/{checkoutOrder.Id}",
+               SuccessUrl = $"https://published.bsite.net/checkout/success/{checkoutOrder.Id}",
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions
@@ -216,8 +218,9 @@ namespace practice.Controllers
                 if (order == null)
                     return NotFound();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                System.Console.WriteLine(ex.Message);
                 return NotFound();
             }
             await Clear();

@@ -268,7 +268,7 @@ header {
   .modal-header{
     margin-bottom: 20px;
   }
-  #modal{
+  .modal.delete{
     height: 260px;
-  }
+  } 
 }

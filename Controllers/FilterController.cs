@@ -8,9 +8,9 @@ namespace practice.Controllers;
 public class FilterController : Controller
 {
 
-    private readonly ItemRepository _repository;
+    private readonly IItemRepository _repository;
 
-    public FilterController(ItemRepository repository) => this._repository = repository;
+    public FilterController(IItemRepository repository) => this._repository = repository;
 
 
     [Route("/q:{url}")]

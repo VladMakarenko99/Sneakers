@@ -21,6 +21,12 @@ public class UserRepository : IUserRepository
         return await _context.Users.FirstOrDefaultAsync(x => x.Email == email!);
     }
 
+    public async Task<List<Order>> GetOrders(int userId)
+    {
+       var orders = await _context.Orders.Where(x => x.UserId == userId).ToListAsync();
+       return orders;
+    }
+
     public async Task Remove(User user)
     {
         _context.Users.Remove(user!);
@@ -30,13 +36,6 @@ public class UserRepository : IUserRepository
     public async Task SetCartItems(User? user, string? cartItemsJson)
     {
         user!.CartItemsJson = cartItemsJson;
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task SetOrder(User user, Guid id)
-    {
-        user.OrderId = id;
-        _context.Update(user);
         await _context.SaveChangesAsync();
     }
 
