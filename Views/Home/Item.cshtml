@@ -1,7 +1,7 @@
 @model practice.Models.Item
 @{
     ViewData["Title"] = Model?.Name;
-    string src = $"https://vladyslav067.bsite.net/api/images/{Model?.Image}";
+    string src = $"/api/images/{Model?.Image}";
     src = src.Replace(" ", "-");
 }
 

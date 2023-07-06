@@ -17,11 +17,11 @@
     {
         <div class="user">
             <a id="hello" href="/profile">Hello, @user.FirstName</a>
-            <a href="/profile" class="account"><img src="https://published.bsite.net/api/images/account.svg" alt=""></a>
+            <a href="/profile" class="account"><img src="/api/images/account.svg" alt=""></a>
             <a asp-controller="Account" asp-action="Logout" class="btn reg logout">Log Out</a>
         </div>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="https://published.bsite.net/api/images/cart.svg" /></a>
+            <a href="/cart"><img class="cart" src="/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
     }
@@ -30,7 +30,7 @@
         <a class="btn auth" href="/account/login">Log In</a>
         <a class="btn reg" href="/account/register">Register</a>
         <div class="cartdiv">
-            <a href="/cart"><img class="cart" src="https://published.bsite.net/api/images/cart.svg" /></a>
+            <a href="/cart"><img class="cart" src="/api/images/cart.svg" /></a>
             <div class="counter">@ViewBag.itemCount</div>
         </div>
     }

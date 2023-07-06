@@ -17,7 +17,7 @@
     <h2>View Order:</h2>
     @foreach (var item in Model)
     {
-        string src = $"https://published.bsite.net/api/images/{item.Image}";
+        string src = $"/api/images/{item.Image}";
         src = src.Replace(' ', '-');
         <div class="product">
             <img src="@src">

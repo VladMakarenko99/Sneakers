@@ -20,7 +20,7 @@
             <section class="product-list">
                 @foreach (Item item in Model)
                 {
-                    string src = $"https://published.bsite.net/api/images/{item.Image}";
+                    string src = $"/api/images/{item.Image}";
                     src = src.Replace(' ', '-');
                     <div class="product">
                         <img src="@src" alt="product1" class="child img">

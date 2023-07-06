@@ -24,7 +24,6 @@ body {
 }
 
 .product {
-    border: 0.8px solid #ccc;
     padding: 10px;
     text-align: center;
 }
@@ -199,7 +198,7 @@ body {
     background-repeat: no-repeat, repeat;
     background-size: 14px 9px;
     border: 1px solid #d2d2d2;
-    background-image: url('https://published.bsite.net/api/images/tick.svg');
+    background-image: url('/api/images/tick.svg');
     border-radius: 8px;
     box-sizing: border-box;
     color: #221f1f;

@@ -133,9 +133,8 @@ namespace practice.Controllers
         {
             var json = HttpContext.Session.GetString("cartItems");
             if (string.IsNullOrEmpty(json))
-            {
-                return NotFound();
-            }
+                return Redirect("/");
+            
             var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken"));
             if (currentUser != null)
             {

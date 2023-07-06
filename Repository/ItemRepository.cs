@@ -14,14 +14,9 @@ namespace practice.Repository
             return await _context.Items.CountAsync();
         }
 
-        public List<Item> GetAll()
-        {
-            return _context.Items.ToList();
-        }
-
         public async Task<List<Item>> GetAllAsync()
         {
-            return await _context.Items.ToListAsync();
+            return await _context.Items.Where(x => x.Id >= 0).OrderBy(x => x.Id).ToListAsync();
         }
 
         public async Task<Brand?> GetBrandByNameAsync(string name)
@@ -37,7 +32,7 @@ namespace practice.Repository
 
         public async Task<List<Item>> GetFewAsync(int load)
         {
-            return await _context.Items.Take(load).ToListAsync();
+            return await _context.Items.Where(x => x.Id >= 0).OrderBy(x => x.Id).Take(load).ToListAsync();
         }
     }
 }

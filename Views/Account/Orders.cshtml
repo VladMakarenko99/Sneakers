@@ -16,7 +16,8 @@
             {
                 var list = JsonConvert.DeserializeObject<List<Item>>(order.ItemsJson!) ?? new List<Item>();
                 <div class="order">
-                    <p id="id">Order Id: @order.Id</p>
+                    <p id="id">Order Id: <span>@order.Id</span></p>
+                    <p id="total">Total Price: <span>@order.TotalPrice $</span></p>
                     <p>Items:</p>
                     <div class="items">
                         @foreach (var item in list)
@@ -35,7 +36,8 @@
 }
 else
 {
-    <div class="content">
-    <h1>You have no orders yet</h1>
-</div>
+    <div class="no-items">
+        <h1 class="text">You have no orders yet</h1>
+        <a href="/">Go to the store</a>
+    </div>
 }

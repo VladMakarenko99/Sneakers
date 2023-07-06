@@ -20,12 +20,6 @@
             <input type="text" value="@Model.LastName" class="input" asp-for="LastName">
             <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
-
-        @* <div class="form-group -login">
-        <label class="control-label">Email </label>
-        <input type="text" value="@Model.Email" class="input" asp-for="Email">
-        <span asp-validation-for="Email" class="text-danger"></span>
-        </div> *@
         <input type="hidden" asp-for="Email" value="@Model.Email">
         <input type="submit" class="button" value="Submit Changes">
 

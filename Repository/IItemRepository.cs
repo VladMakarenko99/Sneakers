@@ -6,8 +6,6 @@ namespace practice.Repository
     {
         public Task<int> CountAsync();
 
-        public List<Item> GetAll();
-
         public Task<List<Item>> GetAllAsync();
 
         public Task<Item?> GetByNameAsync(string name);

@@ -89,7 +89,7 @@ public class FilterController : Controller
     {
         var filteredList = new List<Item>();
         var filterStrings = url.Split("&").ToList();
-        var entireList = _repository.GetAll();
+        var entireList = await _repository.GetAllAsync();
 
         foreach (string filter in filterStrings)
         {

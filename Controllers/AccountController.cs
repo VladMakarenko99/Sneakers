@@ -157,12 +157,12 @@ public class AccountController : Controller
     public async Task<IActionResult> Profile()
     {
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
-            return NotFound();
+            return Redirect("/account/login");
 
         var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
         currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
         if (currentUser == null)
-            return NotFound();
+            return Redirect("/account/register");
 
         return View(currentUser);
     }
@@ -276,12 +276,12 @@ public class AccountController : Controller
     public async Task<IActionResult> Manage()
     {
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
-            return NotFound();
+            return Redirect("/account/login");
 
         var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
         currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
         if (currentUser == null)
-            return NotFound();
+            return Redirect("account/register");
 
         return View(currentUser);
     }
@@ -323,6 +323,6 @@ public class AccountController : Controller
             return View(orders);
         }
 
-        return NotFound();
+        return Redirect("/account/login");
     }
 }

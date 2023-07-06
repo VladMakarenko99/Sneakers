@@ -41,7 +41,7 @@
                 {
                     <div class="product">
                         @{
-                            string src = $"https://published.bsite.net/api/images/{item.Image}";
+                            string src = $"/api/images/{item.Image}";
                             src = src.Replace(' ', '-');
                             item.Name = item.Name?.Replace(' ', '-');
                         }
@@ -60,17 +60,9 @@
         }
     </div>
 </div>
-<footer class="footer" style="margin-top: 7%;">
-    <div class="contacts">
-        <span>Contacts</span>
-        <div class="links">
-            <a href="tel:+380679555670">+380679555670</a>
-            <a href="mailto:mvladyslav02@gmail.com">mvladyslav02@gmail.com</a>
-        </div>
-    </div>
-    <p>© Sneakershop 2023 All rights reserved</p>
-    <div class="top-up"><img src="https://published.bsite.net/api/images/tick.svg" alt=""></div>
-</footer>
+<partial name="_footer"/>
 <script src="~/js/scroll.js"></script>
-
+<style>
+    .footer{margin-top: 7%;}
+</style>
 </html>

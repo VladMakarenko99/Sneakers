@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using practice.Auth;
 using practice.Repository;
-using Npgsql;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
