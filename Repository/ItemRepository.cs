@@ -1,8 +1,9 @@
-using practice.Data;
-using practice.Models;
+using Sneakers.Data;
+using Sneakers.Models;
 using Microsoft.EntityFrameworkCore;
+using Sneakers.Interfaces;
 
-namespace practice.Repository
+namespace Sneakers.Repository
 {
     public class ItemRepository : IItemRepository
     {

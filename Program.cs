@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using practice.Data;
+using Sneakers.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using practice.Auth;
-using practice.Repository;
+using Sneakers.Auth;
+using Sneakers.Repository;
+using Sneakers.Interfaces;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 var userSecretsConfig = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
@@ -60,10 +60,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = "https://published.bsite.net/",
-        ValidAudience = "https://published.bsite.net/",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("G2JCIW9PkUOiN47WjTRl"))
+        ValidateIssuerSigningKey = true
     };
 });
 

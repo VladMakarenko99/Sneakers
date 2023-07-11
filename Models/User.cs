@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-namespace practice.Models
+namespace Sneakers.Models
 {
 	public class User
 	{

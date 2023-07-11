@@ -1,11 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using practice.Models;
-using practice.Auth;
+using Sneakers.Models;
+using Sneakers.Auth;
 using Stripe.Checkout;
 using Stripe;
-using practice.Repository;
+using Sneakers.Interfaces;
 
 namespace practice.Controllers
 {
@@ -150,7 +150,6 @@ namespace practice.Controllers
         [HttpPost]
         public async Task<IActionResult> Pay(Order order)
         {
-            System.Console.WriteLine(order.FirstName + " ++++ " + order.LastName);
             string order_desc = "";
             var checkoutOrder = new Order
             {
@@ -174,12 +173,13 @@ namespace practice.Controllers
             }
             await _orderRepository.Add(checkoutOrder);
 
+            string successUrl = order.SuccessUrl + checkoutOrder.Id;
 
             StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
-
+            
             var options = new SessionCreateOptions
             {
-               SuccessUrl = $"https://published.bsite.net/checkout/success/{checkoutOrder.Id}",
+               SuccessUrl = successUrl,
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions

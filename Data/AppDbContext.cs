@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using practice.Models;
+using Sneakers.Models;
 
-namespace practice.Data;
+namespace Sneakers.Data;
 
 public class AppDbContext : DbContext
 {

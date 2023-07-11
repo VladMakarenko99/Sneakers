@@ -1,9 +1,9 @@
-
-using practice.Data;
-using practice.Models;
+using Sneakers.Interfaces;
+using Sneakers.Data;
+using Sneakers.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace practice.Repository;
+namespace Sneakers.Repository;
 
 public class UserRepository : IUserRepository
 {

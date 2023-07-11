@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using practice.Models;
-using practice.Repository;
+using Sneakers.Models;
+using Sneakers.Interfaces;
 
 namespace practice.Controllers;
 

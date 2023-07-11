@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace practice.Models
+namespace Sneakers.Models
 {
     public class Order
     {
@@ -24,5 +19,7 @@ namespace practice.Models
         public int? TotalPrice { get; set; }   
 
         public int UserId { get; set; } 
+
+        public string? SuccessUrl { get; set; }
     }
 }

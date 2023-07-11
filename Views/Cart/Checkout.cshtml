@@ -1,5 +1,6 @@
 @using System.Text;
 @using System.Text.Json;
+@using Sneakers.Models
 @model Order;
 <link rel="stylesheet" type="text/css" href="css/checkout.css">
 @{
@@ -44,6 +45,7 @@
 			<input type="text" id="address" name="address" asp-for="Address" required>
 
 			<input type="hidden" id="totalHidden" asp-for="TotalPrice" value="@ViewBag.totalPrice">
+			<input type="hidden" id="succesUrl" asp-for="SuccessUrl">
 
 
 			<button type="submit" id="submit">Submit</button>
@@ -76,3 +78,4 @@
 		</div>
 	</div>
 </div>
+<script src="~/js/checkout.js"></script>

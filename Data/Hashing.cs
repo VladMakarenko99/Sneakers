@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace practice.Data;
+namespace Sneakers.Data;
 
 public static class Hashing
 {

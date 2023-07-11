@@ -1,10 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using practice.Models;
+using Sneakers.Models;
 using System.Text;
 using System.Security.Claims;
 
-namespace practice.Auth;
+namespace Sneakers.Auth;
 
 public class JWT 
 {

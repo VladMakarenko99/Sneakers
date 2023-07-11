@@ -5,14 +5,14 @@ using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
-using practice.Data;
-using practice.Models;
+using Sneakers.Data;
+using Sneakers.Models;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.Json;
 using System.Text;
-using practice.Auth;
-using practice.Repository;
+using Sneakers.Auth;
+using Sneakers.Interfaces;
 
 namespace practice.Controllers;
 

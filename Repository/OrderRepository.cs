@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using practice.Data;
-using practice.Models;
+using Sneakers.Interfaces;
+using Sneakers.Data;
+using Sneakers.Models;
 
-namespace practice.Repository
+namespace Sneakers.Repository
 {
     public class OrderRepository : IOrderRepository
     {

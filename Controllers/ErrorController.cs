@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace practice.Controllers
+namespace Sneakers.Controllers
 {
     [Route("[controller]")]
     public class ErrorController : Controller

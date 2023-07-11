@@ -1,6 +1,6 @@
-using practice.Models;
+using Sneakers.Models;
 
-namespace practice.Repository
+namespace Sneakers.Interfaces
 {
     public interface IOrderRepository
     {

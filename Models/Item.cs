@@ -1,4 +1,4 @@
-namespace practice.Models;
+namespace Sneakers.Models;
 
 public class Item
 {
