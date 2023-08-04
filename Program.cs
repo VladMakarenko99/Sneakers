@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Sneakers.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Sneakers.Auth;
 using Sneakers.Repository;
 using Sneakers.Interfaces;
-using System.Net;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
