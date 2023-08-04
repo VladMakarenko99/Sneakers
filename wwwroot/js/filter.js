@@ -375,7 +375,7 @@ search.addEventListener("keyup", function (el) {
         search.value = "";
         localStorage.removeItem("searchValue");
         search.focus();
-        window.location.href = '/';
+        history.pushState(null, null, '/');
         return;
     }
     localStorage.setItem("searchValue", searchValue);

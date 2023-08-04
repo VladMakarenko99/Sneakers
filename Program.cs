@@ -7,7 +7,7 @@ using System.Text;
 using Sneakers.Auth;
 using Sneakers.Repository;
 using Sneakers.Interfaces;
-
+using System.Net;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
