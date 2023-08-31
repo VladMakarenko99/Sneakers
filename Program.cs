@@ -6,14 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using Sneakers.Auth;
 using Sneakers.Repository;
 using Sneakers.Interfaces;
+using System.Configuration;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-var userSecretsConfig = new ConfigurationBuilder()
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddUserSecrets<Program>()
-            .Build();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -42,8 +39,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
            })
            .AddGoogle(options =>
            {
-               options.ClientId = "320116085655-o5ddlr35dbjjlvsqaok83mm4tnb53ng1.apps.googleusercontent.com";
-               options.ClientSecret = "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";
+               options.ClientId = builder.Configuration["Google:ClientId"]!;
+               options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
            });
 
 builder.Services.AddAuthentication(options =>
