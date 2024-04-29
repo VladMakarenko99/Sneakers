@@ -13,11 +13,14 @@ namespace practice.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
-        private readonly JWT _jwt;
 
-        public CartController(JWT jwt, IOrderRepository _repository, IUserRepository _userRepository)
+        private readonly Auth _auth;
+
+
+        public CartController(IOrderRepository _repository, IUserRepository _userRepository, Auth _auth)
         {
-            this._jwt = jwt;
+
+            this._auth = _auth;
             this._orderRepository = _repository;
             this._userRepository = _userRepository;
         }
@@ -35,10 +38,9 @@ namespace practice.Controllers
         [HttpPost]
         public async Task<RedirectResult> AddToCart(Item item)
         {
-            string? token = HttpContext.Session.GetString("JwtToken");
-            if (token != null)
+            if (User.Identity!.IsAuthenticated)
             {
-                var currentUser = _jwt.GetCurrentUser(token);
+                var currentUser = _auth.GetCurrentUser(HttpContext);
                 currentUser = await _userRepository.GetByEmailAsync(currentUser!.Email!);
                 if (!string.IsNullOrEmpty(currentUser!.CartItemsJson))
                 {
@@ -47,7 +49,8 @@ namespace practice.Controllers
                     var CartList = JsonSerializer.Deserialize<List<Item>>(currentUser.CartItemsJson);
                     CartList!.Add(item);
                     await _userRepository.SetCartItems(currentUser, JsonSerializer.Serialize(CartList));
-                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(currentUser));
+
+                    await _auth.SignIn(currentUser, _userRepository, HttpContext);
                 }
                 else
                 {
@@ -56,7 +59,8 @@ namespace practice.Controllers
                     var CartList = new List<Item>();
                     CartList.Add(item);
                     await _userRepository.SetCartItems(currentUser, JsonSerializer.Serialize(CartList));
-                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(currentUser));
+
+                    await _auth.SignIn(currentUser, _userRepository, HttpContext);
                 }
             }
             else
@@ -78,16 +82,16 @@ namespace practice.Controllers
         [Route("/DeleteItem/{id}")]
         public async Task<RedirectResult> DeleteItem(int id)
         {
-            string? token = HttpContext.Session.GetString("JwtToken");
-            if (!string.IsNullOrEmpty(token))
+            if (User.Identity!.IsAuthenticated)
             {
-                var user = await _userRepository.GetByEmailAsync(_jwt.GetCurrentUser(token)!.Email!);
-                if (user!.CartItemsJson != null && user.CartItemsJson != "")
+                var user = _auth.GetCurrentUser(HttpContext);
+                if (!string.IsNullOrEmpty(user.CartItemsJson))
                 {
                     var CartList = JsonSerializer.Deserialize<List<Item>>(user.CartItemsJson);
                     CartList!.Remove(CartList.Find(x => x.Id == id)!);
                     await _userRepository.SetCartItems(user, JsonSerializer.Serialize(CartList));
-                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
+
+                    await _auth.SignIn(user, _userRepository, HttpContext);
                 }
             }
             var list = GetSessionList("cartItems");
@@ -110,14 +114,13 @@ namespace practice.Controllers
         }
         public async Task<RedirectResult> Clear()
         {
-            string? token = HttpContext.Session.GetString("JwtToken");
-            if (!string.IsNullOrEmpty(token))
+            if (User.Identity!.IsAuthenticated)
             {
-                var user = await _userRepository.GetByEmailAsync(_jwt.GetCurrentUser(token)!.Email!);
+                var user = await _userRepository.GetByEmailAsync(_auth.GetCurrentUser(HttpContext)!.Email!);
                 if (user != null)
                 {
                     await _userRepository.SetCartItems(user, null);
-                    HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user!));
+                    await _auth.SignIn(user, _userRepository, HttpContext);
                 }
             }
             HttpContext.Session.Remove("cartItems");
@@ -134,8 +137,8 @@ namespace practice.Controllers
             var json = HttpContext.Session.GetString("cartItems");
             if (string.IsNullOrEmpty(json))
                 return Redirect("/");
-            
-            var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken"));
+
+            var currentUser = _auth.GetCurrentUser(HttpContext);
             if (currentUser != null)
             {
                 ViewBag.userEmail = currentUser.Email;
@@ -166,20 +169,19 @@ namespace practice.Controllers
             foreach (var item in GetSessionList("cartItems"))
                 order_desc += item.Name + ", ";
 
-            string? token = HttpContext.Session.GetString("JwtToken");   
-            if (!string.IsNullOrEmpty(token))
+            if (User.Identity!.IsAuthenticated)
             {
-                checkoutOrder.UserId = _jwt.GetCurrentUser(token)!.Id;
+                checkoutOrder.UserId = _auth.GetCurrentUser(HttpContext)!.Id;
             }
             await _orderRepository.Add(checkoutOrder);
 
             string successUrl = order.SuccessUrl + checkoutOrder.Id;
 
             StripeConfiguration.ApiKey = "sk_test_51MzK0CFPQmRrRl3KPutq8uBAM0WZ890vWCAj2PKDWCd89zQ3DcCpijZaA0S9IWt59Xz0XvSXrihYQZFVQPKtiL7400oWFzosq6";
-            
+
             var options = new SessionCreateOptions
             {
-               SuccessUrl = successUrl,
+                SuccessUrl = successUrl,
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions

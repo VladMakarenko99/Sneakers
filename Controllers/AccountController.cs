@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using System.Globalization;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
 using Sneakers.Data;
 using Sneakers.Models;
 using System.Text.RegularExpressions;
@@ -18,18 +16,14 @@ namespace practice.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly JWT _jwt;
-
-    private readonly IOrderRepository _orderRepository;
+    private readonly Auth _auth;
 
     private readonly IUserRepository _repository;
 
-
-    public AccountController(IUserRepository _repository, JWT jwt, IOrderRepository _orderRepository)
+    public AccountController(IUserRepository _repository, Auth _auth)
     {
-        this._jwt = jwt;
+        this._auth = _auth;
         this._repository = _repository;
-        this._orderRepository = _orderRepository;
     }
 
 
@@ -37,7 +31,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Register()
     {
-        if (HttpContext.Session.GetString("JwtToken") != null)
+        if (User.Identity!.IsAuthenticated)
             return NotFound();
 
         return View();
@@ -89,8 +83,9 @@ public class AccountController : Controller
         user = new User(user.FirstName!, user.LastName!, user.Email!, Hashing.HashPassword($"{user.Password!}{salt}"), Hashing.HashPassword($"{user.ConfirmedPass!}{salt}"), salt);
         await _repository.AddAsync(user);
 
-        HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
 
+        await ResetCartData(user);
+        await _auth.SignIn(user, _repository, HttpContext);
         return Redirect("/");
     }
 
@@ -98,7 +93,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        if (HttpContext.Session.GetString("userEmail") != null)
+        if (User.Identity!.IsAuthenticated)
             return NotFound();
         return View();
     }
@@ -119,20 +114,8 @@ public class AccountController : Controller
 
         if (Hashing.HashPassword($"{model.Password}{userFound?.Salt}") == userFound?.Password)
         {
-
-            HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userFound));
-
-
-            var client = new SmtpClient("smtp.mailtrap.io", 2525)
-            {
-                Credentials = new NetworkCredential("81efc4e3f15367", "57ba73d15a23d3"),
-                EnableSsl = true
-            };
-
             await ResetCartData(userFound);
-
-            client.Send("i.e 3aeccdb09f-0167be+1@inbox.mailtrap.io", Convert.ToString(userFound.Email)!,
-                $@"Login is successful, {userFound.FirstName} {userFound.LastName}!", "");
+            await _auth.SignIn(userFound, _repository, HttpContext);
 
             return Redirect("/");
         }
@@ -144,10 +127,9 @@ public class AccountController : Controller
         return View("Login", model);
     }
 
-    public RedirectResult Logout()
+    public async Task<RedirectResult> Logout()
     {
-        HttpContext.Session.Remove("JwtToken");
-
+        await HttpContext.SignOutAsync();
 
         return Redirect("/");
     }
@@ -156,10 +138,10 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
+        if (!User.Identity!.IsAuthenticated)
             return Redirect("/account/login");
 
-        var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
+        var currentUser = _auth.GetCurrentUser(HttpContext);
         currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
         if (currentUser == null)
             return Redirect("/account/register");
@@ -170,12 +152,13 @@ public class AccountController : Controller
     [Route("/account/delete")]
     public async Task<IActionResult> DeleteAccount()
     {
-        string? token = HttpContext.Session.GetString("JwtToken");
-        if (string.IsNullOrEmpty(token))
+        var currentUser = _auth.GetCurrentUser(HttpContext);
+        if (User == null)
             return NotFound();
-        var currentUser = _jwt.GetCurrentUser(token);
         await _repository.Remove(await _repository.GetByEmailAsync(currentUser!.Email!) ?? new User());
-        HttpContext.Session.Remove("JwtToken");
+
+        await HttpContext.SignOutAsync();
+
         return Redirect("/");
     }
 
@@ -202,7 +185,6 @@ public class AccountController : Controller
         }
 
         var email = result.Principal.FindFirstValue(ClaimTypes.Email);
-        System.Console.WriteLine(email);
         var userFound = await _repository.GetByEmailAsync(email!);
 
         if (userFound == null)
@@ -218,12 +200,11 @@ public class AccountController : Controller
             await _repository.AddAsync(user);
             userFound = user;
         }
-        HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userFound));
-        System.Console.WriteLine(_jwt.GenerateJwtToken(userFound));
 
         await ResetCartData(userFound);
+        await _auth.SignIn(userFound, _repository, HttpContext);
 
-        return Redirect("/");
+        return RedirectToAction("Index", "Home", new { area = "" });
     }
 
     private async Task ResetCartData(User user)
@@ -236,7 +217,7 @@ public class AccountController : Controller
                 string json = Encoding.UTF8.GetString(bytes);
                 user.CartItemsJson = json;
                 await _repository.Update(user);
-                HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
+                await _auth.SignIn(user, _repository, HttpContext);
             }
         }
         else
@@ -261,7 +242,7 @@ public class AccountController : Controller
 
             user.CartItemsJson = JsonSerializer.Serialize(list1);
             await _repository.Update(user);
-            HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(user));
+            await _auth.SignIn(user, _repository, HttpContext);
         }
     }
 
@@ -275,10 +256,10 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Manage()
     {
-        if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
+        if (!User.Identity!.IsAuthenticated)
             return Redirect("/account/login");
 
-        var currentUser = _jwt.GetCurrentUser(HttpContext.Session.GetString("JwtToken")!);
+        var currentUser = _auth.GetCurrentUser(HttpContext);
         currentUser = await _repository.GetByEmailAsync(currentUser!.Email!);
         if (currentUser == null)
             return Redirect("account/register");
@@ -304,8 +285,8 @@ public class AccountController : Controller
         userToUpdate.Email = user.Email;
 
         await _repository.Update(userToUpdate);
-        HttpContext.Session.SetString("JwtToken", _jwt.GenerateJwtToken(userToUpdate));
 
+        await _auth.SignIn(user, _repository, HttpContext);
         return Redirect("/profile");
     }
 
@@ -313,11 +294,10 @@ public class AccountController : Controller
     [Route("/account/orders")]
     public async Task<IActionResult> Orders()
     {
-        string? token = HttpContext.Session.GetString("JwtToken");
-        if (!string.IsNullOrEmpty(token))
+        var user = _auth.GetCurrentUser(HttpContext);
+        if (user != null)
         {
-            var userId = _jwt.GetCurrentUser(token)!.Id;
-            var orders = await _repository.GetOrders(userId);
+            var orders = await _repository.GetOrders(user.Id);
             if (orders == null)
                 return View(null);
             return View(orders);

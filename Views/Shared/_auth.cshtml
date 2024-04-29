@@ -12,11 +12,10 @@
         ViewBag.itemCount = Context.Session.GetInt32("LoginedUserProductCount");
     }
 
-    var user = new JWT().GetCurrentUser(Context.Session.GetString("JwtToken"));
-    if (user != null)
+    if(Context!.User!.Identity!.IsAuthenticated)
     {
         <div class="user">
-            <a id="hello" href="/profile">Hello, @user.FirstName</a>
+            <a id="hello" href="/profile">Hello, @User.Identity?.Name</a>
             <a href="/profile" class="account"><img src="/api/images/account.svg" alt=""></a>
             <a asp-controller="Account" asp-action="Logout" class="btn reg logout">Log Out</a>
         </div>
