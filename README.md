@@ -4,4 +4,4 @@
 
 
 ## Link to DockerHub - [https://hub.docker.com/repository/docker/vladyslav333/sneakers_image/general](https://hub.docker.com/repository/docker/vladyslav333/sneakers_image/general)
-## Link to deployed application - [(https://angularsteamintegration.web.app/)](https://angularsteamintegration.web.app/)
+## Link to deployed application - [https://sneakers.azurewebsites.net/](https://sneakers.azurewebsites.net/)
